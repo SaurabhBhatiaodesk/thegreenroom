@@ -22,6 +22,7 @@
   assign text_style = section.settings.text-style
   assign use_image_fallback = section.settings.use-image-fallback
   assign text_color = section.settings.text-color
+  assign collection_image_alt = collection.title
 
   if description_location == 'with-title' and show_description and collection.description != blank
     assign show_inside_description = true
@@ -70,7 +71,7 @@
             render 'sizes-cover', aspect_ratio: aspect_ratio, container_width: container_width, display_type: display_type, mobile_aspect_ratio: mobile_aspect_ratio, mobile_display_type: mobile_display_type, mobile_full_width: true, original_aspect_ratio: image_to_render.aspect_ratio
           endcapture
 
-          render 'image', image: image_to_render, display_type: display_type, aspect_ratio: aspect_ratio, mobile_display_type: mobile_display_type, mobile_aspect_ratio: mobile_aspect_ratio, overlay_style: overlay_style, mobile_overlay_style: overlay_style, mobile_full_width: true, parallax: parallax_enabled, full_width: true, loading: loading, fetchpriority: fetchpriority, sizes: sizes
+          render 'image', image: image_to_render, display_type: display_type, aspect_ratio: aspect_ratio, mobile_display_type: mobile_display_type, mobile_aspect_ratio: mobile_aspect_ratio, overlay_style: overlay_style, mobile_overlay_style: overlay_style, mobile_full_width: true, parallax: parallax_enabled, full_width: true, loading: loading, fetchpriority: fetchpriority, sizes: sizes, alt: collection_image_alt
         else
           assign image_enabled = false
         endif

@@ -88,7 +88,9 @@
     opacity: 0.96;
   }
 
-  #shopify-section-{{ section.id }} .button_h6 h4 {
+  #shopify-section-{{ section.id }} .button_h6 .button-label {
+    display: block;
+    font-weight: bold;
     margin: 0;
     font-family: "DM Sans", sans-serif;
     font-size: 22px;
@@ -164,7 +166,7 @@
       padding: 14px 18px;
     }
 
-    #shopify-section-{{ section.id }} .button_h6 h4 {
+    #shopify-section-{{ section.id }} .button_h6 .button-label {
       font-size: 16px;
     }
   }
@@ -203,7 +205,7 @@
           style="color: {{ section.settings.button_text_color }}; background-image: url('{{ section.settings.button_image | image_url }}');"
           target="_blank"
         >
-          <h4>{{ section.settings.button_text }}</h4>
+          <span class="button-label">{{ section.settings.button_text }}</span>
         </a>
       {% endif %}
     </div>

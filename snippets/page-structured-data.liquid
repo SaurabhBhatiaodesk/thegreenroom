@@ -1,0 +1,27 @@
+{%- doc -%}
+  Renders structured data for pages without product or article schema.
+{%- enddoc -%}
+
+{%- liquid
+  assign schema_type = 'WebPage'
+  case request.page_type
+    when 'index'
+      assign schema_type = 'WebSite'
+    when 'collection'
+      assign schema_type = 'CollectionPage'
+    when 'blog'
+      assign schema_type = 'Blog'
+  endcase
+-%}
+
+{%- unless request.page_type == 'product' or request.page_type == 'article' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": {{ schema_type | json }},
+      "@id": {{ canonical_url | append: '#webpage' | json }},
+      "name": {{ page_title | json }},
+      "url": {{ canonical_url | json }}
+    }
+  </script>
+{%- endunless -%}

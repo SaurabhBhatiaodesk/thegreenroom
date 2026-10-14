@@ -12,6 +12,7 @@
 {%- liquid
   assign fetchpriority = fetchpriority | default: 'high'
   assign loading = loading | default: 'eager'
+  assign logo_alt = logo.alt | default: shop.name
 -%}
 
 <a
@@ -38,6 +39,7 @@
       logo |
       image_url: width: twice_width |
       image_tag:
+        alt: logo_alt,
         itemprop: "logo",
         style: logo_vars,
         fetchpriority: fetchpriority,

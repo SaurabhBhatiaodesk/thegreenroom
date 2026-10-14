@@ -23,6 +23,8 @@
   assign media_size = media_size | default: ''
   assign video_looping_enabled = video_looping_enabled | default: false
   assign zoom_enabled = zoom_enabled | default: false
+  assign media_alt = product_media.alt | default: product.title
+  assign media_width = product_media.width | at_most: 3000
 
   assign aspect_ratio = product_media.aspect_ratio | round: 3
   if product_media.media_type == 'model'
@@ -53,8 +55,11 @@
           >
             {{-
               product_media |
-              image_url: width: product_media.width |
+              image_url: width: media_width |
               image_tag:
+                alt: media_alt,
+                width: product_media.width,
+                height: product_media.height,
                 class: 'product-zoom--wrapper',
                 widths: '300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1500, 1800, 2100, 2400, 3000',
                 sizes: sizes,
@@ -66,6 +71,7 @@
               product_media |
               image_url: width: magnified_width |
               image_tag:
+                alt: '',
                 class: 'product-zoom--enlarged',
                 widths: '300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1500, 1800, 2100, 2400, 3000',
                 loading: 'lazy',
@@ -76,8 +82,11 @@
         {%- else -%}
           {{-
             product_media |
-            image_url: width: product_media.width |
+            image_url: width: media_width |
             image_tag:
+              alt: media_alt,
+              width: product_media.width,
+              height: product_media.height,
               widths: '300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1500, 1800, 2100, 2400, 3000',
               sizes: sizes,
               loading: loading,

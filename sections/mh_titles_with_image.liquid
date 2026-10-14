@@ -26,10 +26,6 @@
     z-index: 2;
   }
 
-  #shopify-section-{{ section.id }} .title_wrapper_h7 h2:not(:first-child) {
-    display: none;
-  }
-
   #shopify-section-{{ section.id }} .title_wrapper_h7 h2.title_dd {
     margin: 0;
     text-align: left;
@@ -51,6 +47,7 @@
   }
 
   #shopify-section-{{ section.id }} .image_bottom_text_h7 {
+    font-weight: bold;
     margin: 20px 0 0;
     text-align: left;
     width: 100%;
@@ -126,17 +123,16 @@
             {% if section.settings.title != blank %}
               <div class="title_wrapper_h7">
                 <h2 class="title_dd" style="color: {{ section.settings.title_color }}">{{ section.settings.title }}</h2>
-                <h2 class="title_dd" style="color: {{ section.settings.title_color }}">{{ section.settings.title }}</h2>
-                <h2 class="title_dd" style="color: {{ section.settings.title_color }}">{{ section.settings.title }}</h2>
-                <h2 class="title_dd" style="color: {{ section.settings.title_color }}">{{ section.settings.title }}</h2>
               </div>
             {% endif %}
 
             {% if section.settings.title_image != blank %}
               <img
                 class="image_dd round_rotate_dd title_image_h7"
-                src="{{ section.settings.title_image | image_url }}"
+                src="{{ section.settings.title_image | image_url: width: 400 }}"
                 alt="{{ section.settings.title_image.alt | escape }}"
+                width="{{ section.settings.title_image.width }}"
+                height="{{ section.settings.title_image.height }}"
                 loading="lazy"
               >
             {% endif %}
@@ -145,17 +141,19 @@
         {% endif %}
 
         {% if section.settings.text != blank %}
-          <h4 class="title_dd image_bottom_text_h7" style="color: {{ section.settings.title_color }}">
+          <p class="title_dd image_bottom_text_h7" style="color: {{ section.settings.title_color }}">
             {{ section.settings.text }}
-          </h4>
+          </p>
         {% endif %}
       </div>
 
       {% if section.settings.image != blank %}
         <img
           class="image_dd image_h7"
-          src="{{ section.settings.image | image_url }}"
+          src="{{ section.settings.image | image_url: width: 1000 }}"
           alt="{{ section.settings.image.alt | escape }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
           loading="lazy"
         >
       {% endif %}

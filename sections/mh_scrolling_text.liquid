@@ -37,7 +37,8 @@
     color: {{ section.settings.text_color }};
   }
 
-  #shopify-section-{{ section.id }} .marquee_group_d6 h4 {
+  #shopify-section-{{ section.id }} .marquee_group_d6 .marquee-label {
+    font-weight: bold;
     margin: 0;
     color: inherit;
     white-space: nowrap;
@@ -56,7 +57,7 @@
 {% capture scrolling_text %}
   {% for block in section.blocks %}
     {% if block.settings.text != blank %}
-      <li {{ block.shopify_attributes }}><h4>{{ block.settings.text }}</h4></li>
+      <li {{ block.shopify_attributes }}><p class="marquee-label">{{ block.settings.text }}</p></li>
     {% endif %}
   {% endfor %}
 {% endcapture %}

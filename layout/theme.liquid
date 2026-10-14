@@ -88,6 +88,7 @@
       {%- sections 'overlay-group' -%}
 
       <main class="layout--template" id="main_content">
+        {%- render 'page-heading-fallback', content: content_for_layout -%}
         {{ content_for_layout }}
       </main>
 

@@ -16,6 +16,10 @@
   endif
 
   assign text_color = text_color | default: 'body'
+  assign product_heading_tag = 'h2'
+  if main_product
+    assign product_heading_tag = 'h1'
+  endif
 -%}
 
 {%- if onboarding -%}
@@ -46,9 +50,9 @@
                 data-transition-type="slide-in"
               {% endunless %}
             >
-              <h2 class="product-form--block--heading" data-item="{{ heading_type }}">
+              <{{ product_heading_tag }} class="product-form--block--heading" data-item="{{ heading_type }}">
                 {{- 'sections.onboarding.product_title' | t -}}
-              </h2>
+              </{{ product_heading_tag }}>
             </div>
 
           {%- when 'vendor' -%}
@@ -206,7 +210,7 @@
                 data-transition-type="slide-in"
               {% endunless %}
             >
-              <h2 class="product-form--block--heading" data-item="{{ heading_type }}">
+              <{{ product_heading_tag }} class="product-form--block--heading" data-item="{{ heading_type }}">
                 {%- unless main_product -%}
                   <a href="{{ product.url }}">
                 {%- endunless -%}
@@ -216,7 +220,7 @@
                 {%- unless main_product -%}
                   </a>
                 {%- endunless -%}
-              </h2>
+              </{{ product_heading_tag }}>
             </div>
 
           {%- when 'label' -%}

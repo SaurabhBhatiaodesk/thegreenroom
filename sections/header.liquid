@@ -326,15 +326,9 @@
 
   {%- unless use_alternate_header -%}
   <div class="header--wrapper">
-    {%- if request.page_type == 'index' -%}
-      <h1 class="header--logo">
-        {{- logo_html -}}
-      </h1>
-    {%- else -%}
-      <div class="header--logo">
-        {{- logo_html -}}
-      </div>
-    {%- endif -%}
+    <div class="header--logo">
+      {{- logo_html -}}
+    </div>
 
     {%- if layout == 'center-below' or overlap_behavior == 'center-below' -%}
       <div class="header--search-container">

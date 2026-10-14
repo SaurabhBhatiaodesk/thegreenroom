@@ -94,7 +94,7 @@
   {% comment %} Sidebar view {% endcomment %}
   <div class="pickup--drawer--container">
     <div class="pickup--drawer--header">
-      <h2 class="pickup--drawer--product-title" data-item="section-heading"></h2>
+      <h2 class="pickup--drawer--product-title" data-item="section-heading">{{ product.title | default: shop.name | escape }}</h2>
       <p class="pickup--drawer--variant-title" data-item="nav-text">
         {{- product_variant.title -}}
       </p>
@@ -166,7 +166,7 @@
 
 {% schema %}
 {
-  "name": {},
+  "name": "Pickup availability",
   "class": "section--pickup",
   "settings": []
 }

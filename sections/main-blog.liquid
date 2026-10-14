@@ -211,7 +211,7 @@
         {%- liquid
           capture blog_articles
             for article in blog.articles
-              render 'article-card', featured_article: article, heading_type: article_heading_type, show_author: show_author, show_cta: show_cta, show_date: show_date, show_excerpt: show_excerpt, transition_id: section.id, sizes: sizes
+              render 'article-card', featured_article: article, heading_type: article_heading_type, heading_tag: 'h2', show_author: show_author, show_cta: show_cta, show_date: show_date, show_excerpt: show_excerpt, transition_id: section.id, sizes: sizes
             endfor
           endcapture
 

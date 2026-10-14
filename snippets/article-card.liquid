@@ -4,6 +4,7 @@
   Renders a blog article card with optional metadata and placeholders.
   @param {article} [featured_article] - Article to display.
   @param {string} [heading_type] - Heading data-item class. Defaults to `block-heading`.
+  @param {string} [heading_tag] - Heading level: h2 for the blog index, h3 within a section.
   @param {string} [loading] - Image loading mode.
   @param {boolean} [placeholder] - Show placeholder state. Defaults to `false`.
   @param {boolean} [show_author] - Show author name.
@@ -23,8 +24,10 @@
   assign written_by_t = 'blog.article.written_by' | t
 
   assign heading_type = heading_type | default: 'block-heading'
+  assign heading_tag = heading_tag | default: 'h3'
   assign show_date = show_date | default: false
   assign placeholder = placeholder | default: false
+  assign image_alt = featured_article.image.alt | default: featured_article.title
 -%}
 
 <div
@@ -40,9 +43,9 @@
       {%- render 'placeholder', type: 'image' -%}
     </div>
 
-    <h3 class="article-card--heading" data-item="{{ heading_type }}">
+    <{{ heading_tag }} class="article-card--heading" data-item="{{ heading_type }}">
       {{- article_item_title_t -}}
-    </h3>
+    </{{ heading_tag }}>
 
     {%- if show_date -%}
       <div class="article-card--date" data-item="nav-text" data-text-color="gray">
@@ -69,11 +72,11 @@
         data-transition-type="zoom-in"
         data-transition-trigger="hover"
       {% endunless %}
-      aria-label="{{ featured_article.image.alt }}"
+      aria-label="{{ featured_article.title | escape }}"
     >
       {%- liquid
         if featured_article.image
-          render 'image', image: featured_article.image, sizes: sizes, loading: loading, view_transition: article_view_transition
+          render 'image', image: featured_article.image, sizes: sizes, loading: loading, view_transition: article_view_transition, alt: image_alt
         else
           render 'placeholder', type: 'lifestyle', placeholder_index: 2, view_transition: article_view_transition
         endif
@@ -81,9 +84,9 @@
     </a>
 
     <a href="{{ featured_article.url }}" class="article-card--heading-link">
-      <h3 class="article-card--heading" data-item="{{ heading_type }}">
+      <{{ heading_tag }} class="article-card--heading" data-item="{{ heading_type }}">
         {{- featured_article.title -}}
-      </h3>
+      </{{ heading_tag }}>
     </a>
 
     {%- if show_date or show_author -%}

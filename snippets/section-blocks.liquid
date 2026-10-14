@@ -4,6 +4,7 @@
   Renders generic section block content (headings, buttons, icons, etc.).
   @param {object[]} blocks - Section blocks to render.
   @param {string} section_id - Section identifier for transitions.
+  @param {number} [section_index] - Position of the section in the main template.
   @param {string} [bg_color] - Background color token. Defaults to `transparent`.
   @param {string} [fetchpriority] - Image fetch priority for block images.
   @param {string} [loading] - Image loading mode for block images.
@@ -27,6 +28,12 @@
   assign bg_color = bg_color | default: 'transparent'
   assign text_color = text_color | default: 'body'
   assign mobile_text_color = mobile_text_color | default: text_color
+  assign title_tag = 'h2'
+  if section_index == 1
+    if request.page_type == 'page' or request.page_type == 'blog' or request.page_type == 'index'
+      assign title_tag = 'h1'
+    endif
+  endif
 -%}
 
 {%- capture block_html -%}
@@ -87,7 +94,7 @@
         {% endunless %}
         {{ block.shopify_attributes }}
       >
-        <h2 class="section-blocks--title" data-item="{{ block.settings.heading-type }}">
+        <{{ title_tag }} class="section-blocks--title" data-item="{{ block.settings.heading-type }}">
           {%-
             render 'utils',
             name: 'highlighted-text',
@@ -96,7 +103,8 @@
             highlight_text: block.settings.highlight-text,
             highlight_type: block.settings.highlight-type
           -%}
-        </h2>
+        </{{ title_tag }}>
+        {%- assign title_tag = 'h2' -%}
       </div>
 
     {%- elsif block.type == 'overline' and block.settings.overline != blank -%}
@@ -108,9 +116,9 @@
         {% endunless %}
         {{ block.shopify_attributes }}
       >
-        <h3 class="section-blocks--overline" data-item="overline">
+        <p class="section-blocks--overline" data-item="overline">
           {{- block.settings.overline | escape -}}
-        </h3>
+        </p>
       </div>
 
     {%- elsif block.type == 'description' and block.settings.description != blank -%}

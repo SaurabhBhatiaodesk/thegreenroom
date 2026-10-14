@@ -41,6 +41,9 @@
 {%- if product.media.size > 0 -%}
   {%- for media in product.media -%}
     {%- liquid
+      assign media_alt = media.alt | default: product.title
+      assign modal_image_width = media.preview_image.width | at_most: 3000
+      assign thumbnail_image_width = media.preview_image.width | at_most: 200
       if media.media_type == "model"
         assign load_model = true
       elsif media.media_type == "video" or media.media_type == "external_video"
@@ -114,8 +117,11 @@
         >
           {{-
             media.preview_image |
-            image_url: width: media.preview_image.width |
+            image_url: width: modal_image_width |
             image_tag:
+              alt: media_alt,
+              width: media.preview_image.width,
+              height: media.preview_image.height,
               widths: "500, 767, 1000, 1200, 1500, 1800, 2100, 2400, 3000",
               sizes: '100vw',
               loading: 'lazy'
@@ -160,8 +166,11 @@
           {%- assign thumbnail_sizes = thumbnail_width | append: 'px' -%}
           {{-
             media.preview_image |
-            image_url: width: media.preview_image.width |
+            image_url: width: thumbnail_image_width |
             image_tag:
+              alt: media_alt,
+              width: media.preview_image.width,
+              height: media.preview_image.height,
               widths: "50, 100, 200",
               sizes: thumbnail_sizes,
               loading: 'lazy'

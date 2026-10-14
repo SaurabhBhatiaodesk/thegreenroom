@@ -10,6 +10,8 @@
 
 {%- liquid
   assign title = product_item.title
+  assign image_alt = product_item.featured_media.alt | default: product_item.title
+  assign image_width = product_item.featured_media.preview_image.width | at_most: 240
   if onboarding
     assign title = 'sections.onboarding.product_title' | t
   endif
@@ -32,8 +34,8 @@
       {%- if product_item.featured_media.preview_image -%}
         {{-
           product_item.featured_media.preview_image |
-          image_url: width: product_item.featured_media.preview_image.width |
-          image_tag: widths: '240', sizes: '120px', draggable: false
+          image_url: width: image_width |
+          image_tag: widths: '240', sizes: '120px', draggable: false, alt: image_alt, width: product_item.featured_media.preview_image.width, height: product_item.featured_media.preview_image.height
         -}}
       {%- else -%}
         {%-

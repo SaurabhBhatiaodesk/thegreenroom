@@ -14,6 +14,11 @@
     line-height: 1.6;
   }
 
+  #shopify-section-{{ section.id }} .text_d8 .text-d8-copy {
+    font-weight: bold;
+    margin: 0;
+  }
+
   #shopify-section-{{ section.id }} .buttons_wrapper_d4 {
     display: flex;
     justify-content: center;
@@ -39,7 +44,9 @@
     transform: scale(1.05);
   }
 
-  #shopify-section-{{ section.id }} .button_d8 h4 {
+  #shopify-section-{{ section.id }} .button_d8 .button-label {
+    display: block;
+    font-weight: bold;
     font-size: 13px;
     text-align: center;
     margin: 0;
@@ -117,7 +124,7 @@
               style="color: {{ section.settings[button_text_color] }};
               background-image: url('{{ section.settings[button_image] | image_url }}')"
               target="_blank">
-              <h4>{{ section.settings[button_text] }}</h4>
+              <span class="button-label">{{ section.settings[button_text] }}</span>
             </a>
           {% endif %}
         {% endfor %}

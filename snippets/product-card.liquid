@@ -21,6 +21,10 @@
   assign compare_price = false
   assign featured_tags = settings.product--featured-tags | remove: ' ' | split: ','
   assign heading_type = settings.product--heading-type
+  assign image_alt = product_item.featured_media.alt | default: product_item.title
+  assign hover_image_alt = product_item.media[1].alt | default: product_item.title
+  assign card_image_width = product_item.featured_media.preview_image.width | at_most: 1000
+  assign hover_image_width = product_item.media[1].preview_image.width | at_most: 1000
   assign hide_single_swatch = settings.product--hide-single-swatch
   assign image_aspect_ratio = settings.image--product-size
   assign label_color = settings.product--label-color
@@ -148,8 +152,11 @@
     {%- if product_item.featured_media.preview_image -%}
       {{-
         product_item.featured_media.preview_image |
-        image_url: width: product_item.featured_media.preview_image.width |
+        image_url: width: card_image_width |
         image_tag:
+          alt: image_alt,
+          width: product_item.featured_media.preview_image.width,
+          height: product_item.featured_media.preview_image.height,
           class: 'product-card--image',
           widths: '200, 300, 400, 500, 600, 700, 800, 900, 1000',
           sizes: sizes,
@@ -173,8 +180,11 @@
     {%- if product_item.media.size > 1 -%}
       {{-
         product_item.media[1].preview_image |
-        image_url: width: product_item.media[1].preview_image.width |
+        image_url: width: hover_image_width |
         image_tag:
+          alt: hover_image_alt,
+          width: product_item.media[1].preview_image.width,
+          height: product_item.media[1].preview_image.height,
           class: 'product-card--hover-image',
           widths: '200, 300, 400, 500, 600, 700, 800, 900, 1000',
           sizes: sizes,
