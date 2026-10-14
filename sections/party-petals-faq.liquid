@@ -1,0 +1,554 @@
+{{ 'party-petals.css' | asset_url | stylesheet_tag }}
+
+<section 
+  class="pp-wrap"
+  style="background-color: {{ section.settings.background_color }};"
+>
+  <div class="pp-container">
+    <div class="pp-inner">
+      <div 
+        class="pp-faq-block" 
+        id="pp-faq-{{ section.id }}" 
+        style="
+          --pp-accent: {{ section.settings.accent_color }};
+          --pp-heading-color: {{ section.settings.heading_color }};
+          --pp-subheading-color: {{ section.settings.subheading_color }};
+          --pp-question-color: {{ section.settings.question_color }};
+          --pp-answer-color: {{ section.settings.answer_color }};
+          --pp-divider-color: {{ section.settings.divider_color }};
+          --pp-question-font-size: {{ section.settings.question_font_size }}px;
+          --pp-question-font-size-mobile: {{ section.settings.question_font_size_mobile }}px;
+          --pp-answer-font-size: {{ section.settings.answer_font_size }}px;
+          --pp-answer-font-size-mobile: {{ section.settings.answer_font_size_mobile }}px;
+          --pp-padding-h: {{ section.settings.padding_horizontal }}px;
+          --pp-padding-h-mobile: {{ section.settings.padding_horizontal_mobile }}px;
+          --pp-padding-bottom: {{ section.settings.padding_bottom }}px;
+          --pp-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+          --pp-answer-padding-right: {{ section.settings.answer_padding_right }}px;
+          --pp-answer-padding-right-mobile: {{ section.settings.answer_padding_right_mobile }}px;
+        "
+      >
+
+        <div class="pp-faq-head">
+          <h2 class="pp-section-title">
+            {{ section.settings.heading | default: 'FAQ' }}
+          </h2>
+
+          <p class="pp-faq-sub">
+            {{ section.settings.subheading | default: 'The things brides ask us most' }}
+          </p>
+        </div>
+
+        <div class="pp-faq-list">
+
+          {% for block in section.blocks %}
+            {% if block.type == 'faq' %}
+
+              <div class="pp-faq-item" {{ block.shopify_attributes }}>
+
+                <button 
+                  type="button" 
+                  class="pp-faq-question" 
+                  data-pp-faq-toggle 
+                  aria-expanded="false"
+                >
+                  <h3 class="pp-faq-q-text">
+                    {{ block.settings.question }}
+                  </h3>
+
+                  <span class="pp-faq-sign" data-pp-faq-sign>
+                    +
+                  </span>
+                </button>
+
+
+                <div 
+                  class="pp-faq-answer" 
+                  data-pp-faq-answer 
+                  hidden
+                >
+                  <p>
+                    {{ block.settings.answer }}
+                  </p>
+                </div>
+
+              </div>
+
+            {% endif %}
+          {% endfor %}
+
+          <div class="pp-faq-end"></div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+    
+/* =========================================================
+   SECTION: party-petals-faq.liquid
+   ========================================================= */
+.pp-faq-block { padding: 0 var(--pp-padding-h, 110px) var(--pp-padding-bottom, 110px); }
+.pp-faq-head { display: flex; flex-direction: column; gap: 20px; margin-bottom: 44px; }
+.pp-faq-sub { margin: 0; font-size: 15px; font-style: italic; color: var(--pp-subheading-color, #264A3D); opacity: 0.75; }
+.pp-faq-list { display: grid; grid-template-columns: 1fr; gap: 0; }
+.pp-faq-item { border-top: 1px solid var(--pp-divider-color, rgba(38, 74, 61, 0.18)); }
+.pp-faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 26px 0;
+  cursor: pointer;
+  text-align: left;
+  transition: opacity 150ms ease;
+}
+.pp-faq-question:hover { opacity: 0.72; }
+.pp-faq-q-text {
+  margin: 0;
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: var(--pp-question-font-size, 16px);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--pp-question-color, #264A3D);
+}
+.pp-faq-sign {
+  flex: 0 0 auto;
+  font-family: Poppins, sans-serif;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--pp-accent, #D37F91);
+}
+.pp-faq-answer p {
+  margin: 0;
+  padding: 0 var(--pp-answer-padding-right, 90px) 30px 0;
+  font-size: var(--pp-answer-font-size, 15px);
+  line-height: 1.85;
+  color: var(--pp-answer-color, #264A3D);
+}
+.pp-faq-end { border-top: 1px solid var(--pp-divider-color, rgba(38, 74, 61, 0.18)); }
+
+.pp-section-title { color: var(--pp-heading-color, #264A3D); }
+
+@media (max-width: 749px) {
+    .pp-faq-q-text {
+        font-size: var(--pp-question-font-size-mobile, 14px);
+    }
+    .pp-faq-answer p {
+        font-size: var(--pp-answer-font-size-mobile, 14px);
+        padding-right: var(--pp-answer-padding-right-mobile, 20px);
+    }
+    .pp-faq-block{
+        padding-left: var(--pp-padding-h-mobile, 20px);
+        padding-right: var(--pp-padding-h-mobile, 20px);
+        padding-bottom: var(--pp-padding-bottom-mobile, 70px);
+    }
+}
+</style>
+
+<script>
+(function () {
+
+  var root = document.getElementById('pp-faq-{{ section.id }}');
+
+  if (!root) return;
+
+
+  var singleOpen = {{ section.settings.single_open_faq | default: true }};
+
+  var faqItems = Array.prototype.slice.call(
+    root.querySelectorAll('.pp-faq-item')
+  );
+
+
+  faqItems.forEach(function (item) {
+
+    var btn = item.querySelector('[data-pp-faq-toggle]');
+    var answer = item.querySelector('[data-pp-faq-answer]');
+    var sign = item.querySelector('[data-pp-faq-sign]');
+
+
+    btn.addEventListener('click', function () {
+
+      var isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+
+      if (singleOpen) {
+
+        faqItems.forEach(function (other) {
+
+          if (other === item) return;
+
+
+          other
+            .querySelector('[data-pp-faq-toggle]')
+            .setAttribute('aria-expanded', 'false');
+
+
+          other
+            .querySelector('[data-pp-faq-answer]')
+            .hidden = true;
+
+
+          other
+            .querySelector('[data-pp-faq-sign]')
+            .textContent = '+';
+
+        });
+
+      }
+
+
+      btn.setAttribute(
+        'aria-expanded',
+        String(!isOpen)
+      );
+
+
+      answer.hidden = isOpen;
+
+      sign.textContent = isOpen ? '+' : '−';
+
+    });
+
+  });
+
+
+})();
+</script>
+
+
+{% schema %}
+{
+  "name": "Party Petals — FAQ",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#264A3D"
+    },
+
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#264A3D"
+    },
+
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question text color",
+      "default": "#264A3D"
+    },
+
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer text color",
+      "default": "#264A3D"
+    },
+
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider line color",
+      "default": "#264A3D",
+      "info": "Applied at reduced opacity between FAQ items"
+    },
+
+    {
+      "type": "select",
+      "id": "accent_color",
+      "label": "Accent color (+/− sign)",
+
+      "options": [
+        {
+          "value": "#D37F91",
+          "label": "Rose"
+        },
+        {
+          "value": "#AACC97",
+          "label": "Sage"
+        },
+        {
+          "value": "#264A3D",
+          "label": "Forest"
+        }
+      ],
+
+      "default": "#D37F91"
+    },
+
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FAQ"
+    },
+
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "The things brides ask us most"
+    },
+
+    {
+      "type": "range",
+      "id": "question_font_size",
+      "label": "Question font size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+
+    {
+      "type": "range",
+      "id": "question_font_size_mobile",
+      "label": "Question font size (mobile)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+
+    {
+      "type": "range",
+      "id": "answer_font_size",
+      "label": "Answer font size (desktop)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+
+    {
+      "type": "range",
+      "id": "answer_font_size_mobile",
+      "label": "Answer font size (mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Side padding (desktop)",
+      "min": 0,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+
+    {
+      "type": "range",
+      "id": "padding_horizontal_mobile",
+      "label": "Side padding (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding (desktop)",
+      "min": 0,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding (mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 70
+    },
+
+    {
+      "type": "range",
+      "id": "answer_padding_right",
+      "label": "Answer right padding (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 90
+    },
+
+    {
+      "type": "range",
+      "id": "answer_padding_right_mobile",
+      "label": "Answer right padding (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "single_open_faq",
+      "label": "Only allow one FAQ open at a time",
+      "default": true
+    }
+
+  ],
+
+
+  "blocks": [
+
+    {
+      "type": "faq",
+      "name": "FAQ item",
+
+      "settings": [
+
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How far in advance should I order?"
+        },
+
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "We ask for a minimum of two weeks lead time."
+        }
+
+      ]
+
+    }
+
+  ],
+
+
+  "presets": [
+
+    {
+      "name": "Party Petals — FAQ",
+
+      "blocks": [
+
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How far in advance should I order?",
+            "answer": "We ask for a minimum of two weeks lead time, though the sooner the better. Placing your order early means we can secure your date in the calendar and make sure we have the right blooms lined up for your day."
+          }
+        },
+
+        {
+          "type": "faq",
+          "settings": {
+            "question": "When do I collect my florals?",
+            "answer": "You collect from our studio. We will have them ready for collection at 10am of your wedding day. Everything will be ready and waiting, beautifully wrapped with setup guidance included."
+          }
+        },
+
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Can I choose my colour palette?",
+            "answer": "Yes, each design in the Party Petals Collection is available in a range of colour palettes. You choose the direction and we take it from there."
+          }
+        },
+
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Can I request specific flowers?",
+            "answer": "We design around what is most beautiful and available in season. If there is something you feel strongly about, let us know and we will always do our best to work it in."
+          }
+        },
+
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What if I want something more customised?",
+            "answer": "Party Petals is designed to keep things simple. If you'd like a fully tailored design, our wedding proposal service gives you direct access to our florist team."
+          }
+        },
+
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Do I need to spend a minimum amount?",
+            "answer": "Party Petals is our online collection for florals under $3,000, making it the most accessible way to work with us."
+          }
+        },
+
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Can we have a chat before I order?",
+            "answer": "Of course. If you'd like to talk through your florals before placing an order, you're welcome to get in touch and we can organise a time."
+          }
+        }
+
+      ]
+
+    }
+
+  ]
+
+}
+{% endschema %}

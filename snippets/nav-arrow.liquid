@@ -1,0 +1,12 @@
+<!-- snippets/nav-arrow.liquid -->
+
+{%- doc -%}
+  Renders a directional navigation arrow icon.
+  @param {string} direction - `left` or `right`.
+{%- enddoc -%}
+
+{%- assign icon_name = 'arrow-' | append: direction -%}
+
+<div class="nav-arrow" data-direction="{{ direction }}">
+  {% render 'icons', icon: icon_name %}
+</div>

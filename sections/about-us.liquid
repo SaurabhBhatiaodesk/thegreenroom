@@ -1,0 +1,914 @@
+<!-- sections/about-us.liquid -->
+
+{%- liquid
+  assign aspect_ratio = 100.0 | divided_by: section.settings.aspect-ratio
+  assign bg_color = section.settings.background-color
+  assign block_borders_enabled = section.settings.block-borders-enabled
+  assign border = section.settings.border
+  assign container_width = section.settings.container-width
+  assign display_type = section.settings.image-display-type
+  assign mobile_aspect_ratio = 100.0 | divided_by: section.settings.mobile-aspect-ratio
+  assign mobile_display_type = section.settings.mobile-image-display-type
+  assign mobile_spacing_above = section.settings.mobile-spacing-above
+  assign mobile_spacing_below = section.settings.mobile-spacing-below
+  assign mobile_text_x_alignment = section.settings.mobile-text-horizontal-alignment
+  assign placeholder_index = 1
+  assign spacing_above = section.settings.spacing-above
+  assign spacing_below = section.settings.spacing-below
+  assign text_color = section.settings.text-color
+
+  assign full_width = false
+  if container_width == '6'
+    assign full_width = true
+  endif
+
+  assign block_border = 'none'
+  if block_borders_enabled
+    assign block_border = 'bottom'
+  endif
+
+  capture sizes
+    render 'sizes-grid', container_width: container_width, columns: 2, mobile_columns: 1
+  endcapture
+-%}
+
+<div
+  class="about-us--root"
+  data-section-id="{{ section.id }}"
+  data-background-color="{{ bg_color }}"
+  data-block-border="{{ block_borders_enabled }}"
+  data-border="{{ border }}"
+  data-container-width="{{ container_width }}"
+  data-spacing-above="{{ spacing_above }}"
+  data-spacing-below="{{ spacing_below }}"
+  data-mobile-spacing-above="{{ mobile_spacing_above }}"
+  data-mobile-spacing-below="{{ mobile_spacing_below }}"
+>
+  <div class="about-us--wrapper">
+    {% for block in section.blocks %}
+      {%- liquid
+        assign block_modulo = forloop.index | modulo: 2
+        assign block_type = block.settings.type
+        assign button_link = block.settings.button-link
+        assign button_style = block.settings.button-style
+        assign button_text = block.settings.button-text
+        assign description = block.settings.description
+        assign description_type = block.settings.description-type
+        assign heading_type = block.settings.heading-type
+        assign image = block.settings.image
+        assign mobile_image = block.settings.mobile-image
+        assign overline = block.settings.overline
+        assign title = block.settings.title
+        assign video_upload = block.settings.video-upload
+        assign video_url = block.settings.video-url
+
+        assign loading = 'lazy'
+        if section.index < 3 and forloop.index < 3
+          assign loading = 'eager'
+        endif
+
+        assign fetchpriority = 'auto'
+        if section.index == 1 and forloop.index == 1
+          assign fetchpriority = 'high'
+        endif
+
+        if forloop.last and block_borders_enabled
+          assign block_border = 'none'
+        endif
+      -%}
+
+      <div
+        class="about-us--block"
+        data-border="{{ block_border }}"
+        data-container="split"
+        data-mobile-x-alignment="{{ mobile_text_x_alignment }}"
+        data-reverse-layout="{% if block_modulo == 1 %}true{% else %}false{% endif %}"
+        data-text-color="{{ text_color }}"
+        {{ block.shopify_attributes }}
+      >
+        {%- if block_type == 'image' -%}
+          {%- if image -%}
+            {%-
+              render 'image',
+              image: image,
+              display_type: display_type,
+              fetchpriority: fetchpriority,
+              full_width: full_width,
+              aspect_ratio: aspect_ratio,
+              mobile_aspect_ratio: mobile_aspect_ratio,
+              mobile_display_type: mobile_display_type,
+              mobile_image: mobile_image,
+              loading: loading,
+              sizes: sizes
+            -%}
+          {%- else -%}
+            {%-
+              render 'placeholder',
+              aspect_ratio: aspect_ratio,
+              display_type: display_type,
+              full_width: full_width,
+              mobile_aspect_ratio: mobile_aspect_ratio,
+              mobile_display_type: mobile_display_type,
+              placeholder_index: placeholder_index,
+              type: 'collection'
+            -%}
+
+            {%- liquid
+              assign placeholder_index = placeholder_index | plus: 1
+              if placeholder_index > 6
+                assign placeholder_index = 1
+              endif
+            -%}
+          {%- endif -%}
+
+        {%- elsif block_type == 'video' -%}
+          {%-
+            render 'video-block',
+            autoplay: true,
+            full_width: full_width,
+            id: block.id,
+            aspect_ratio: aspect_ratio,
+            display_type: display_type,
+            mobile_aspect_ratio: mobile_aspect_ratio,
+            mobile_display_type: mobile_display_type,
+            video_upload: video_upload,
+            video_url: video_url
+          -%}
+        {%- endif -%}
+
+        <div
+          class="about-us--content"
+          {% unless settings.transitions--text %}
+            data-transition-container="{{ block.id }}"
+            data-transition-type="slide-in"
+            data-transition-cascade="vertical"
+            data-transition-cascade-interval="500"
+          {% endunless %}
+        >
+          <div class="about-us--content-top">
+            {% unless overline == blank and title == blank %}
+              <div class="about-us--content-sticky" data-container="block">
+                {%- unless overline == blank -%}
+                  <div
+                    class="about-us--overline"
+                    data-item="overline"
+                    {% unless settings.transitions--text %}
+                      data-transition-item="{{ block.id }}"
+                    {% endunless %}
+                  >
+                    {{- overline | escape -}}
+                  </div>
+                {%- endunless -%}
+
+                {% unless title == blank %}
+                  <h2
+                    class="about-us--title"
+                    data-item="{{ heading_type }}"
+                    {% unless settings.transitions--text %}
+                      data-transition-item="{{ block.id }}"
+                    {% endunless %}
+                  >
+                    {{- title -}}
+                  </h2>
+                {% endunless %}
+              </div>
+            {% endunless %}
+          </div>
+
+          {% unless description == blank and button_text == blank %}
+            <div class="about-us--content-bottom" data-container="block">
+              {%- unless description == blank -%}
+                <div
+                  class="about-us--description"
+                  data-item="{{ description_type }}"
+                  {% unless settings.transitions--text %}
+                    data-transition-item="{{ block.id }}"
+                  {% endunless %}
+                >
+                  {{- description -}}
+                </div>
+              {%- endunless -%}
+
+              {%- unless button_text == blank -%}
+                <a
+                  href="{{ button_link }}"
+                  class="about-us--button"
+                  data-item="{{ button_style }}"
+                  data-text="{{ button_text }}"
+                  {% unless settings.transitions--text %}
+                    data-transition-item="{{ block.id }}"
+                    data-transition-type="fade-in"
+                  {% endunless %}
+                >
+                  <span>{{ button_text }}</span>
+                </a>
+              {%- endunless -%}
+            </div>
+          {% endunless %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .about-us--block {
+    --grid-row-gap: var(--spacing--item);
+    padding: var(--padding) 0;
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+
+    &[data-text-color='white'] {
+      &:before,
+      &:after {
+        background-color: var(--border--color-light);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .about-us--root[data-block-border='false'] & {
+        --padding: var(--spacing--item);
+      }
+
+      .about-us--root[data-block-border='true'] & {
+        --padding: var(--spacing--block);
+      }
+    }
+
+    @media (max-width: 767px) {
+      --padding: var(--spacing--item);
+    }
+  }
+
+  .about-us--content {
+    display: flex;
+    gap: var(--spacing--item);
+    flex-direction: column;
+
+    @media (min-width: 768px) {
+      height: 100%;
+
+      .about-us--root[data-container-width='6'] .about-us--block[data-reverse-layout='true'] & {
+        padding-left: var(--spacing--section--x);
+      }
+
+      .about-us--root[data-container-width='6'] .about-us--block[data-reverse-layout='false'] & {
+        padding-right: var(--spacing--section--x);
+      }
+    }
+  }
+
+  .about-us--content-top {
+    @media (min-width: 768px) {
+      height: 100%;
+    }
+  }
+
+  .about-us--content-sticky {
+    @media (min-width: 768px) {
+      position: sticky;
+      top: var(--sticky-offset);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "About us",
+  "class": "section--about-us",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General layout"
+    },
+    {
+      "id": "border",
+      "label": "Border",
+      "type": "select",
+      "options": [
+        {
+          "label": "Top",
+          "value": "top"
+        },
+        {
+          "label": "Bottom",
+          "value": "bottom"
+        },
+        {
+          "label": "Both",
+          "value": "both"
+        },
+        {
+          "label": "None",
+          "value": "none"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "id": "spacing-above",
+      "label": "Spacing above",
+      "type": "select",
+      "options": [
+        {
+          "label": "None",
+          "value": "none"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        },
+        {
+          "label": "Extra large",
+          "value": "x-large"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "id": "spacing-below",
+      "label": "Spacing below",
+      "type": "select",
+      "options": [
+        {
+          "label": "None",
+          "value": "none"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        },
+        {
+          "label": "Extra large",
+          "value": "x-large"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "id": "background-color",
+      "label": "Background color",
+      "type": "select",
+      "options": [
+        {
+          "label": "None",
+          "value": "none"
+        },
+        {
+          "label": "Light",
+          "value": "light"
+        },
+        {
+          "label": "Dark",
+          "value": "dark"
+        },
+        {
+          "label": "Accent 1",
+          "value": "accent-1"
+        },
+        {
+          "label": "Accent 2",
+          "value": "accent-2"
+        },
+        {
+          "label": "Accent 3",
+          "value": "accent-3"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "id": "container-width",
+      "label": "Maximum container width",
+      "type": "select",
+      "options": [
+        {
+          "label": "Extra small",
+          "value": "1"
+        },
+        {
+          "label": "Small",
+          "value": "2"
+        },
+        {
+          "label": "Medium",
+          "value": "3"
+        },
+        {
+          "label": "Large",
+          "value": "4"
+        },
+        {
+          "label": "Extra large",
+          "value": "5"
+        },
+        {
+          "label": "Full width",
+          "value": "6"
+        }
+      ],
+      "default": "6"
+    },
+    {
+      "type": "checkbox",
+      "id": "block-borders-enabled",
+      "label": "Show block borders",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Text layout"
+    },
+    {
+      "id": "text-color",
+      "label": "Text color",
+      "type": "select",
+      "options": [
+        {
+          "label": "Light",
+          "value": "white"
+        },
+        {
+          "label": "Dark",
+          "value": "body"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "header",
+      "content": "Image layout"
+    },
+    {
+      "id": "image-display-type",
+      "label": "Image proportions",
+      "type": "select",
+      "options": [
+        {
+          "label": "Original aspect ratio",
+          "value": "original"
+        },
+        {
+          "label": "Adjustable aspect ratio",
+          "value": "aspect-ratio"
+        },
+        {
+          "label": "Extra small",
+          "value": "x-small"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        },
+        {
+          "label": "Extra large",
+          "value": "x-large"
+        },
+        {
+          "label": "Fit screen",
+          "value": "fit-screen"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "id": "aspect-ratio",
+      "label": "Adjustable aspect ratio",
+      "type": "range",
+      "min": 24,
+      "max": 200,
+      "step": 2,
+      "default": 56,
+      "visible_if": "{{ section.settings.image-display-type == 'aspect-ratio' }}"
+    },
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "id": "mobile-image-display-type",
+      "label": "Image proportions",
+      "type": "select",
+      "options": [
+        {
+          "label": "Original aspect ratio",
+          "value": "original"
+        },
+        {
+          "label": "Adjustable aspect ratio",
+          "value": "aspect-ratio"
+        },
+        {
+          "label": "Extra small",
+          "value": "x-small"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        },
+        {
+          "label": "Extra large",
+          "value": "x-large"
+        },
+        {
+          "label": "Fit screen",
+          "value": "fit-screen"
+        }
+      ],
+      "default": "original"
+    },
+    {
+      "id": "mobile-aspect-ratio",
+      "label": "Adjustable aspect ratio",
+      "type": "range",
+      "min": 32,
+      "max": 200,
+      "step": 2,
+      "default": 134,
+      "visible_if": "{{ section.settings.mobile-image-display-type == 'aspect-ratio' }}"
+    },
+    {
+      "id": "mobile-spacing-above",
+      "label": "Spacing above",
+      "type": "select",
+      "options": [
+        {
+          "label": "None",
+          "value": "none"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        },
+        {
+          "label": "Extra large",
+          "value": "x-large"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "id": "mobile-spacing-below",
+      "label": "Spacing below",
+      "type": "select",
+      "options": [
+        {
+          "label": "None",
+          "value": "none"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        },
+        {
+          "label": "Extra large",
+          "value": "x-large"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "id": "mobile-text-horizontal-alignment",
+      "label": "Horizontal text position",
+      "type": "text_alignment",
+      "default": "center"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media",
+      "name": "Media",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "select",
+          "id": "type",
+          "label": "Type",
+          "options": [
+            { "label": "Image", "value": "image" },
+            { "label": "Video", "value": "video" }
+          ],
+          "default": "image"
+        },
+        {
+          "id": "image",
+          "label": "Image",
+          "type": "image_picker",
+          "visible_if": "{{ block.settings.type == 'image' }}"
+        },
+        {
+          "type": "video",
+          "id": "video-upload",
+          "label": "Video upload",
+          "visible_if": "{{ block.settings.type == 'video' }}"
+        },
+        {
+          "type": "video_url",
+          "id": "video-url",
+          "label": "Video link",
+          "accept": ["youtube", "vimeo"],
+          "visible_if": "{{ block.settings.type == 'video' }}"
+        },
+        {
+          "id": "overline",
+          "label": "Overline",
+          "type": "text"
+        },
+        {
+          "id": "title",
+          "label": "Heading",
+          "type": "text",
+          "default": "Heading",
+          "info": "Highlight headings by wrapping text with square brackets, ie. This is [highlighted]."
+        },
+        {
+          "id": "heading-type",
+          "label": "Heading type",
+          "type": "select",
+          "options": [
+            { "label": "Banner", "value": "banner-heading" },
+            { "label": "Featured", "value": "featured-heading" },
+            { "label": "Large", "value": "section-heading" },
+            { "label": "Medium", "value": "block-heading" }
+          ],
+          "default": "featured-heading"
+        },
+        {
+          "id": "highlight-type",
+          "label": "Highlight type",
+          "type": "select",
+          "options": [
+            {
+              "label": "Italic",
+              "value": "italic"
+            },
+            {
+              "label": "Bold",
+              "value": "bold"
+            },
+            {
+              "label": "Bold italic",
+              "value": "bold-italic"
+            },
+            {
+              "label": "Text color",
+              "value": "color"
+            },
+            {
+              "label": "Outlined",
+              "value": "outlined"
+            },
+            {
+              "label": "Highlight",
+              "value": "highlight"
+            },
+            {
+              "label": "Half highlight",
+              "value": "half-highlight"
+            },
+            {
+              "label": "Underline",
+              "value": "underline"
+            },
+            {
+              "label": "Reverse opacity",
+              "value": "reverse-opacity"
+            }
+          ],
+          "default": "italic"
+        },
+        {
+          "id": "highlight-color",
+          "label": "Highlight color",
+          "type": "select",
+          "options": [
+            {
+              "label": "Transparent",
+              "value": "transparent"
+            },
+            {
+              "label": "Light",
+              "value": "light"
+            },
+            {
+              "label": "Dark",
+              "value": "dark"
+            },
+            {
+              "label": "Accent 1",
+              "value": "accent-1"
+            },
+            {
+              "label": "Accent 2",
+              "value": "accent-2"
+            },
+            {
+              "label": "Accent 3",
+              "value": "accent-3"
+            }
+          ],
+          "default": "accent-2"
+        },
+        {
+          "id": "highlight-text",
+          "label": "Highlighted text color",
+          "type": "select",
+          "options": [
+            {
+              "label": "None",
+              "value": "none"
+            },
+            {
+              "label": "Light",
+              "value": "light"
+            },
+            {
+              "label": "Dark",
+              "value": "dark"
+            },
+            {
+              "label": "Accent 1",
+              "value": "accent-1"
+            },
+            {
+              "label": "Accent 2",
+              "value": "accent-2"
+            },
+            {
+              "label": "Accent 3",
+              "value": "accent-3"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "id": "description",
+          "label": "Description",
+          "type": "richtext",
+          "default": "<p>Add a description for this block.</p>"
+        },
+        {
+          "id": "description-type",
+          "label": "Description type",
+          "type": "select",
+          "options": [
+            { "label": "Featured", "value": "featured-heading" },
+            { "label": "Large", "value": "section-heading" },
+            { "label": "Medium", "value": "block-heading" },
+            { "label": "Small", "value": "paragraph" }
+          ],
+          "default": "section-heading"
+        },
+        {
+          "id": "button-text",
+          "label": "Button text",
+          "type": "text",
+          "default": "Button"
+        },
+        {
+          "id": "button-link",
+          "label": "Button link",
+          "type": "url"
+        },
+        {
+          "id": "button-style",
+          "label": "Button style",
+          "type": "select",
+          "options": [
+            {
+              "label": "Style 1",
+              "value": "button-1"
+            },
+            {
+              "label": "Style 2",
+              "value": "button-2"
+            },
+            {
+              "label": "Style 3",
+              "value": "button-3"
+            },
+            {
+              "label": "Style 4",
+              "value": "button-4"
+            },
+            {
+              "label": "Link",
+              "value": "block-link"
+            }
+          ],
+          "default": "block-link"
+        },
+        {
+          "type": "header",
+          "content": "Mobile",
+          "visible_if": "{{ block.settings.type == 'image' }}"
+        },
+        {
+          "id": "mobile-image",
+          "label": "Image (optional)",
+          "type": "image_picker",
+          "visible_if": "{{ block.settings.type == 'image' }}"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About us",
+      "category": "Storytelling",
+      "blocks": [
+        {
+          "type": "media",
+          "settings": {
+            "type": "image",
+            "title": "Our Mission",
+            "description": "<p>We make care products you'll actually use every day. When something works, it becomes part of your routine. And when it lasts, it matters. The world doesn't need more products, it needs better ones. So we make formulas built to perform.</p>",
+            "button-text": "LEARN MORE",
+            "button-style": "block-link"
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "type": "video",
+            "title": "Our Production",
+            "description": "<p>We make care products you'll actually use every day. When something works, it becomes part of your routine. And when it lasts, it matters. The world doesn't need more products, it needs better ones. So we make formulas built to perform.</p>",
+            "button-text": "LEARN MORE",
+            "button-style": "block-link"
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "type": "image",
+            "title": "Our Impact",
+            "description": "<p>We make care products you'll actually use every day. When something works, it becomes part of your routine. And when it lasts, it matters. The world doesn't need more products, it needs better ones. So we make formulas built to perform.</p>",
+            "button-text": "LEARN MORE",
+            "button-style": "block-link"
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["aside"]
+  }
+}
+{% endschema %}

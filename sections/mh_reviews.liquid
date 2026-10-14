@@ -1,0 +1,240 @@
+<style>
+.color_{{ section.id }} * { color: {{ section.settings.text_color }} !important; }
+
+#shopify-section-{{ section.id }} .mh_reviews_d5 {
+  position: relative;
+  overflow: hidden;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+#shopify-section-{{ section.id }} .title_d5 {
+  text-align: center;
+  max-width: 980px;
+  margin: 0 auto 42px;
+}
+
+#shopify-section-{{ section.id }} .title_d5 * {
+  font-size: clamp(38px,5vw,72px);
+  line-height: 1.05;
+  margin: 0;
+}
+
+#shopify-section-{{ section.id }} .slider_d5 .swiper-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 28px;
+  transform: none !important;
+}
+
+#shopify-section-{{ section.id }} .swiper-slide {
+  width: auto !important;
+}
+
+#shopify-section-{{ section.id }} .content_d5 {
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 34px 26px 28px;
+  border-radius: 28px;
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+
+#shopify-section-{{ section.id }} .image_wrap_d5 {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+#shopify-section-{{ section.id }} .image_d5 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#shopify-section-{{ section.id }} .stars_d5 {
+  width: 110px;
+  margin-bottom: 18px;
+}
+
+#shopify-section-{{ section.id }} .review_wrap_d5 {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#shopify-section-{{ section.id }} .review_d5 {
+  max-height: 180px;
+  overflow: hidden;
+  position: relative;
+  transition: max-height .3s ease;
+}
+
+#shopify-section-{{ section.id }} .review_d5.is-expanded {
+  max-height: 1000px;
+}
+
+#shopify-section-{{ section.id }} .review_d5.has-read-more.is-collapsed::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,0.12));
+}
+
+#shopify-section-{{ section.id }} .review_d5 p {
+  font-size: 17px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+#shopify-section-{{ section.id }} .read_more_d5 {
+  margin-top: 16px;
+  display: none;
+  font-size: 13px;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+#shopify-section-{{ section.id }} .read_more_d5.is-visible {
+  display: inline-block;
+}
+
+#shopify-section-{{ section.id }} .customer_footer_d5 {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+#shopify-section-{{ section.id }} .customer_name_d5 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+@media(max-width:989px){
+  #shopify-section-{{ section.id }} .slider_d5 .swiper-wrapper {
+    grid-template-columns: repeat(2,1fr);
+  }
+}
+
+@media(max-width:749px){
+  #shopify-section-{{ section.id }} .slider_d5 .swiper-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+{% capture stars %}
+<svg viewBox="0 0 293.2 44.5"><path d="M23.9 0L16.7 14.9 0 17 12.3 28.3 9.1 44.5 23.9 36.6 38.6 44.5 35.5 28.3 47.8 17 31 14.9z"/><path d="M85.2 0L78.1 14.9 61.4 17 73.7 28.3 70.5 44.5 85.2 36.6 100 44.5 96.8 28.3 109.1 17 92.4 14.9z"/><path d="M146.6 0L139.5 14.9 122.7 17 135 28.3 131.9 44.5 146.6 36.6 161.4 44.5 158.2 28.3 170.5 17 153.8 14.9z"/><path d="M208 0L200.8 14.9 184.1 17 196.4 28.3 193.2 44.5 208 36.6 222.7 44.5 219.6 28.3 231.9 17 215.1 14.9z"/><path d="M269.3 0L262.2 14.9 245.5 17 257.8 28.3 254.6 44.5 269.3 36.6 284.1 44.5 280.9 28.3 293.2 17 276.5 14.9z"/></svg>
+{% endcapture %}
+
+<section class="mh_reviews_d5"
+style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px;background:{{ section.settings.background_color }}">
+
+<div class="page-width">
+<div class="max_width_dd">
+
+{% if section.settings.title != blank %}
+<div class="title_d5 color_{{ section.id }}">{{ section.settings.title }}</div>
+{% endif %}
+
+<div class="swiper slider_d5">
+<div class="swiper-wrapper">
+
+{% for block in section.blocks %}
+<div class="swiper-slide">
+<div class="content_d5">
+
+{% if block.settings.image != blank %}
+<div class="image_wrap_d5">
+<img class="image_d5" src="{{ block.settings.image | image_url: width:240 }}">
+</div>
+{% endif %}
+
+<div class="stars_d5 color_{{ section.id }}">{{ stars }}</div>
+
+{% if block.settings.review != blank %}
+<div class="review_wrap_d5">
+<div class="review_d5 is-collapsed" id="review-{{ forloop.index }}">
+{{ block.settings.review }}
+</div>
+<button class="read_more_d5" data-target="review-{{ forloop.index }}">Read more</button>
+</div>
+{% endif %}
+
+{% if block.settings.customer_name != blank %}
+<div class="customer_footer_d5">
+<div class="customer_name_d5">{{ block.settings.customer_name }}</div>
+</div>
+{% endif %}
+
+</div>
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<script>
+document.querySelectorAll('.review_d5').forEach(function(r){
+var b=r.parentElement.querySelector('.read_more_d5')
+if(!b)return
+if(r.scrollHeight>190){
+b.classList.add('is-visible')
+r.classList.add('has-read-more')
+}else{
+r.classList.remove('is-collapsed')
+}
+b.onclick=function(){
+if(r.classList.contains('is-expanded')){
+r.classList.remove('is-expanded')
+r.classList.add('is-collapsed')
+b.innerText='Read more'
+}else{
+r.classList.add('is-expanded')
+r.classList.remove('is-collapsed')
+b.innerText='Read less'
+}
+}
+})
+</script>
+
+{% schema %}
+{
+"name":"TIC Reviews",
+"settings":[
+{"type":"checkbox","id":"slider","label":"Slider","default":true},
+{"type":"color","id":"background_color","label":"Background Color","default":"#dae1c8"},
+{"type":"color","id":"text_color","label":"Text Color","default":"#264A3D"},
+{"type":"richtext","id":"title","label":"Title"},
+{"type":"range","id":"padding_top","min":0,"max":100,"step":2,"unit":"px","label":"Padding Top","default":40},
+{"type":"range","id":"padding_bottom","min":0,"max":100,"step":2,"unit":"px","label":"Padding Bottom","default":40}
+],
+"blocks":[
+{
+"type":"review",
+"name":"review",
+"settings":[
+{"type":"image_picker","id":"image","label":"Image"},
+{"type":"text","id":"customer_name","label":"Customer Name"},
+{"type":"richtext","id":"review","label":"review"}
+]
+}
+]
+}
+{% endschema %}

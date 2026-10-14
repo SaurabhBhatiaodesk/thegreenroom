@@ -1,0 +1,1122 @@
+{{ 'party-petals.css' | asset_url | stylesheet_tag }}
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+>
+
+<section
+  class="pp-wrap"
+  style="background-color: {{ section.settings.background_color }};"
+>
+  <div class="pp-container">
+    <div class="pp-inner">
+
+      <div
+        class="pp-steps-block"
+        id="pp-steps-{{ section.id }}"
+        style="
+          --pp-eyebrow-color: {{ section.settings.eyebrow_color }};
+          --pp-arrow-color: {{ section.settings.arrow_color }};
+          --pp-arrow-border-color: {{ section.settings.arrow_border_color }};
+          --pp-arrow-hover-bg-color: {{ section.settings.arrow_hover_bg_color }};
+          --pp-arrow-hover-text-color: {{ section.settings.arrow_hover_text_color }};
+          --pp-arrow-size: {{ section.settings.arrow_size }}px;
+          --pp-arrow-size-mobile: {{ section.settings.arrow_size_mobile }}px;
+          --pp-card-bg-color: {{ section.settings.card_bg_color }};
+          --pp-card-text-color: {{ section.settings.card_text_color }};
+          --pp-card-border-color: {{ section.settings.card_border_color }};
+          --pp-card-hover-bg-color: {{ section.settings.card_hover_bg_color }};
+          --pp-card-hover-border-color: {{ section.settings.card_hover_border_color }};
+          --pp-icon-bg-color: {{ section.settings.icon_bg_color }};
+          --pp-dot-color: {{ section.settings.dot_inactive_color }};
+          --pp-dot-active-color: {{ section.settings.dot_active_color }};
+          --pp-dot-width: {{ section.settings.dot_width }}px;
+          --pp-dot-width-mobile: {{ section.settings.dot_width_mobile }}px;
+          --pp-dot-height: {{ section.settings.dot_height }}px;
+          --pp-dot-height-mobile: {{ section.settings.dot_height_mobile }}px;
+          --pp-step-label-font-size: {{ section.settings.step_label_font_size }}px;
+          --pp-step-label-font-size-mobile: {{ section.settings.step_label_font_size_mobile }}px;
+          --pp-title-font-size: {{ section.settings.title_font_size }}px;
+          --pp-title-font-size-mobile: {{ section.settings.title_font_size_mobile }}px;
+          --pp-text-font-size: {{ section.settings.text_font_size }}px;
+          --pp-text-font-size-mobile: {{ section.settings.text_font_size_mobile }}px;
+          --pp-padding-top: {{ section.settings.padding_top }}px;
+          --pp-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+          --pp-padding-bottom: {{ section.settings.padding_bottom }}px;
+          --pp-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+          --pp-card-width: {{ section.settings.card_width }}px;
+          --pp-card-min-height: {{ section.settings.card_min_height }}px;
+          --pp-card-min-height-mobile: {{ section.settings.card_min_height_mobile }}px;
+          --pp-card-width-mobile: {{ section.settings.card_width_mobile }}px;
+          --pp-gutter: {{ section.settings.gutter_desktop }}px;
+          --pp-gutter-mobile: {{ section.settings.gutter_mobile }}px;
+          --pp-row-head-margin-bottom: {{ section.settings.row_head_margin_bottom }}px;
+          --pp-row-head-margin-bottom-mobile: {{ section.settings.row_head_margin_bottom_mobile }}px;
+          --pp-dots-padding-top: {{ section.settings.dots_padding_top }}px;
+          --pp-dots-padding-top-mobile: {{ section.settings.dots_padding_top_mobile }}px;
+        "
+      >
+
+        <div class="pp-row-head">
+          <p class="pp-eyebrow">
+            {{ section.settings.eyebrow | default: 'How it works' }}
+          </p>
+
+          <div class="pp-arrows">
+            <button
+              type="button"
+              class="pp-arrow"
+              data-pp-prev="steps"
+              aria-label="Previous step"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <polyline points="14.5,4.5 7,12 14.5,19.5"></polyline>
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="pp-arrow"
+              data-pp-next="steps"
+              aria-label="Next step"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <polyline points="9.5,4.5 17,12 9.5,19.5"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="swiper pp-swiper" data-pp-swiper="steps">
+          <div class="swiper-wrapper">
+
+            {% for block in section.blocks %}
+              {% if block.type == 'step' %}
+
+                <div
+                  class="swiper-slide pp-card"
+                  data-pp-card="steps"
+                  {{ block.shopify_attributes }}
+                >
+                  <div class="pp-icon">
+
+                    {% case block.settings.icon %}
+                      {% when 'palette' %}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                          <rect x="3" y="3" width="7.5" height="7.5"></rect>
+                          <rect x="13.5" y="3" width="7.5" height="7.5"></rect>
+                          <rect x="3" y="13.5" width="7.5" height="7.5"></rect>
+                          <rect x="13.5" y="13.5" width="7.5" height="7.5"></rect>
+                        </svg>
+
+                      {% when 'circles' %}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                          <circle cx="9" cy="9" r="5.5"></circle>
+                          <circle cx="15" cy="9" r="5.5"></circle>
+                          <circle cx="12" cy="15" r="5.5"></circle>
+                        </svg>
+
+                      {% when 'check' %}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                          <rect x="3.5" y="5" width="17" height="15"></rect>
+                          <polyline points="8,11.5 11.2,14.5 16.5,9.5"></polyline>
+                        </svg>
+
+                      {% when 'calendar' %}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                          <rect x="3.5" y="5.5" width="17" height="15"></rect>
+                          <line x1="3.5" y1="10.5" x2="20.5" y2="10.5"></line>
+                          <line x1="8.5" y1="3" x2="8.5" y2="7"></line>
+                          <line x1="15.5" y1="3" x2="15.5" y2="7"></line>
+                        </svg>
+
+                      {% else %}
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                          <polyline points="4,13 4,20.5 20,20.5 20,13"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                          <polyline points="7.5,10.5 12,15 16.5,10.5"></polyline>
+                        </svg>
+                    {% endcase %}
+
+                  </div>
+
+                  <span class="pp-step-label">
+                    {{ block.settings.step_label | default: 'STEP' }}
+                  </span>
+
+                  <h3 class="pp-card-title">
+                    {{ block.settings.title }}
+                  </h3>
+
+                  <p class="pp-card-text">
+                    {{ block.settings.text }}
+                  </p>
+                </div>
+
+              {% endif %}
+            {% endfor %}
+
+          </div>
+        </div>
+
+        <div class="pp-dots" data-pp-pagination="steps"></div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  #pp-steps-{{ section.id }} .pp-row-head,
+  #pp-steps-{{ section.id }} .pp-dots {
+    box-sizing: border-box;
+  }
+
+  #pp-steps-{{ section.id }} .pp-row-head {
+    padding: 0 var(--pp-gutter, 110px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: var(--pp-row-head-margin-bottom, 44px);
+  }
+
+  #pp-steps-{{ section.id }} .pp-eyebrow {
+    margin: 0;
+    font-family: Poppins, sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--pp-eyebrow-color, #AACC97);
+  }
+
+  #pp-steps-{{ section.id }} .pp-arrows {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  #pp-steps-{{ section.id }} .pp-arrow {
+    width: var(--pp-arrow-size, 42px);
+    height: var(--pp-arrow-size, 42px);
+    min-width: var(--pp-arrow-size, 42px);
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid var(--pp-arrow-border-color, #264A3D);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--pp-arrow-color, #264A3D);
+    transition:
+      background 200ms ease,
+      color 200ms ease,
+      opacity 200ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    #pp-steps-{{ section.id }} .pp-arrow:not(.is-disabled):hover {
+      background: var(--pp-arrow-hover-bg-color, #264A3D);
+      color: var(--pp-arrow-hover-text-color, #FFFFF3);
+    }
+  }
+
+  #pp-steps-{{ section.id }} .pp-arrow.is-disabled,
+  #pp-steps-{{ section.id }} .pp-arrow.swiper-button-disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  #pp-steps-{{ section.id }}.pp-steps-block {
+    padding:
+      var(--pp-padding-top, 76px)
+      0
+      var(--pp-padding-bottom, 96px);
+  }
+
+  #pp-steps-{{ section.id }} .pp-swiper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #pp-steps-{{ section.id }} .swiper-wrapper {
+    align-items: stretch;
+  }
+
+  #pp-steps-{{ section.id }} .pp-card {
+    width: var(--pp-card-width, 380px);
+    height: auto;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    background: var(--pp-card-bg-color, #FFFFF3);
+    color: var(--pp-card-text-color, #264A3D);
+    border: 1px solid var(--pp-card-border-color, rgba(38, 74, 61, 0.16));
+    padding: 40px 36px 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: var(--pp-card-min-height, 300px);
+    cursor: default;
+    transition:
+      background 420ms ease,
+      border-color 420ms ease,
+      transform 420ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    #pp-steps-{{ section.id }} .pp-card:hover {
+      background: var(--pp-card-hover-bg-color, #F4DDE2);
+      border-color: var(--pp-card-hover-border-color, #D37F91);
+      transform: translateY(-6px);
+    }
+  }
+
+  #pp-steps-{{ section.id }} .pp-icon {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    border-radius: 999px;
+    background: var(--pp-icon-bg-color, rgba(170, 204, 151, 0.32));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+  }
+
+  #pp-steps-{{ section.id }} .pp-step-label {
+    font-family: Poppins, sans-serif;
+    font-weight: 600;
+    font-size: var(--pp-step-label-font-size, 12px);
+    letter-spacing: 0.16em;
+    color: inherit;
+    opacity: 0.6;
+  }
+
+  #pp-steps-{{ section.id }} .pp-card-title {
+    margin: 0;
+    font-family: Poppins, sans-serif;
+    font-weight: 600;
+    font-size: var(--pp-title-font-size, 21px);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.35;
+    color: inherit;
+  }
+
+  #pp-steps-{{ section.id }} .pp-card-text {
+    margin: 0;
+    font-size: var(--pp-text-font-size, 15px);
+    line-height: 1.85;
+    color: inherit;
+  }
+
+  #pp-steps-{{ section.id }} .pp-dots {
+    padding:
+      var(--pp-dots-padding-top, 34px)
+      var(--pp-gutter, 110px)
+      0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: static;
+    width: auto;
+    text-align: left;
+  }
+
+  #pp-steps-{{ section.id }} .pp-dot {
+    display: block;
+    width: var(--pp-dot-width, 30px);
+    height: var(--pp-dot-height, 3px);
+    margin: 0 !important;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    opacity: 1;
+    background: var(--pp-dot-color, rgba(38, 74, 61, 0.22));
+    cursor: pointer;
+    transition: background-color 180ms ease;
+  }
+
+  #pp-steps-{{ section.id }} .pp-dot.is-active {
+    background: var(--pp-dot-active-color, #D37F91);
+  }
+
+  @media screen and (max-width: 749px) {
+    #pp-steps-{{ section.id }} .pp-row-head {
+      padding-left: var(--pp-gutter-mobile, 24px);
+      padding-right: var(--pp-gutter-mobile, 24px);
+      margin-bottom: var(--pp-row-head-margin-bottom-mobile, 30px);
+      gap: 20px;
+    }
+
+    #pp-steps-{{ section.id }}.pp-steps-block {
+      padding:
+        var(--pp-padding-top-mobile, 40px)
+        0
+        var(--pp-padding-bottom-mobile, 60px);
+    }
+
+    #pp-steps-{{ section.id }} .pp-card {
+      width: var(--pp-card-width-mobile, 300px);
+      min-height: var(--pp-card-min-height-mobile, 280px);
+    }
+
+    #pp-steps-{{ section.id }} .pp-step-label {
+      font-size: var(--pp-step-label-font-size-mobile, 11px);
+    }
+
+    #pp-steps-{{ section.id }} .pp-card-title {
+      font-size: var(--pp-title-font-size-mobile, 18px);
+    }
+
+    #pp-steps-{{ section.id }} .pp-card-text {
+      font-size: var(--pp-text-font-size-mobile, 14px);
+    }
+
+    #pp-steps-{{ section.id }} .pp-arrow {
+      width: var(--pp-arrow-size-mobile, 38px);
+      height: var(--pp-arrow-size-mobile, 38px);
+      min-width: var(--pp-arrow-size-mobile, 38px);
+    }
+
+    #pp-steps-{{ section.id }} .pp-dots {
+      padding-top: var(--pp-dots-padding-top-mobile, 26px);
+      padding-left: var(--pp-gutter-mobile, 24px);
+      padding-right: var(--pp-gutter-mobile, 24px);
+    }
+
+    #pp-steps-{{ section.id }} .pp-dot {
+      width: var(--pp-dot-width-mobile, 24px);
+      height: var(--pp-dot-height-mobile, 3px);
+    }
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+(function () {
+  var sectionId = '{{ section.id }}';
+
+  function initPartyPetalsSteps(id) {
+    var root = document.getElementById('pp-steps-' + id);
+    if (!root) return;
+
+    var swiperElement = root.querySelector('[data-pp-swiper="steps"]');
+    var prevButton = root.querySelector('[data-pp-prev="steps"]');
+    var nextButton = root.querySelector('[data-pp-next="steps"]');
+    var pagination = root.querySelector('[data-pp-pagination="steps"]');
+
+    if (!swiperElement || !prevButton || !nextButton || !pagination) return;
+    if (typeof window.Swiper === 'undefined') return;
+
+    if (swiperElement.swiper) {
+      swiperElement.swiper.destroy(true, true);
+    }
+
+    /*
+      Keep the heading, first card, pagination and arrows on the
+      same left/right gutter. Do not use the old spacer setting
+      for Swiper offsets, otherwise the content starts misaligned.
+    */
+    var swiper = new window.Swiper(swiperElement, {
+      slidesPerView: 'auto',
+      slidesPerGroup: 1,
+      spaceBetween: {{ section.settings.track_gap }},
+      slidesOffsetBefore: {{ section.settings.gutter_desktop }},
+      slidesOffsetAfter: {{ section.settings.gutter_desktop }},
+      speed: 450,
+      initialSlide: 0,
+      watchOverflow: true,
+      grabCursor: true,
+      observer: true,
+      observeParents: true,
+      resistanceRatio: 0.65,
+
+      navigation: {
+        prevEl: prevButton,
+        nextEl: nextButton,
+        disabledClass: 'is-disabled'
+      },
+
+      pagination: {
+        el: pagination,
+        clickable: true,
+        bulletClass: 'pp-dot',
+        bulletActiveClass: 'is-active',
+        renderBullet: function (index, className) {
+          return '<span class="' + className + '" aria-label="Go to step ' + (index + 1) + '"></span>';
+        }
+      },
+
+      breakpoints: {
+        0: {
+          spaceBetween: {{ section.settings.track_gap_mobile }},
+          slidesOffsetBefore: {{ section.settings.gutter_mobile }},
+          slidesOffsetAfter: {{ section.settings.gutter_mobile }}
+        },
+        750: {
+          spaceBetween: {{ section.settings.track_gap }},
+          slidesOffsetBefore: {{ section.settings.gutter_desktop }},
+          slidesOffsetAfter: {{ section.settings.gutter_desktop }}
+        }
+      }
+    });
+
+    swiper.slideTo(0, 0, false);
+    swiper.pagination.update();
+    swiper.navigation.update();
+  }
+
+  function boot() {
+    if (typeof window.Swiper !== 'undefined') {
+      initPartyPetalsSteps(sectionId);
+      return;
+    }
+
+    var attempts = 0;
+    var timer = window.setInterval(function () {
+      attempts += 1;
+
+      if (typeof window.Swiper !== 'undefined') {
+        window.clearInterval(timer);
+        initPartyPetalsSteps(sectionId);
+      }
+
+      if (attempts >= 40) {
+        window.clearInterval(timer);
+      }
+    }, 100);
+  }
+
+  boot();
+
+  if (!window.__partyPetalsStepsSectionListener) {
+    window.__partyPetalsStepsSectionListener = true;
+
+    document.addEventListener('shopify:section:load', function (event) {
+      if (!event || !event.target) return;
+
+      var loadedRoot = event.target.querySelector('[id^="pp-steps-"]');
+      if (!loadedRoot) return;
+
+      var loadedId = loadedRoot.id.replace('pp-steps-', '');
+
+      window.setTimeout(function () {
+        initPartyPetalsSteps(loadedId);
+      }, 50);
+    });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Party How it works",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#AACC97"
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow icon color",
+      "default": "#264A3D"
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_border_color",
+      "label": "Arrow border color",
+      "default": "#264A3D"
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_hover_bg_color",
+      "label": "Arrow hover background",
+      "default": "#264A3D"
+    },
+
+    {
+      "type": "color",
+      "id": "arrow_hover_text_color",
+      "label": "Arrow hover icon color",
+      "default": "#FFFFF3"
+    },
+
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background",
+      "default": "#FFFFF3"
+    },
+
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card text color",
+      "default": "#264A3D"
+    },
+
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "rgba(38,74,61,0.16)"
+    },
+
+    {
+      "type": "color",
+      "id": "card_hover_bg_color",
+      "label": "Card hover background",
+      "default": "#F4DDE2"
+    },
+
+    {
+      "type": "color",
+      "id": "card_hover_border_color",
+      "label": "Card hover border color",
+      "default": "#D37F91"
+    },
+
+    {
+      "type": "color",
+      "id": "icon_bg_color",
+      "label": "Icon background",
+      "default": "rgba(170,204,151,0.32)"
+    },
+
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Active dot color",
+      "default": "#D37F91"
+    },
+
+    {
+      "type": "color",
+      "id": "dot_inactive_color",
+      "label": "Inactive dot color",
+      "default": "rgba(38,74,61,0.22)"
+    },
+
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "How it works"
+    },
+
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+
+    {
+      "type": "range",
+      "id": "step_label_font_size",
+      "label": "Step label font size (desktop)",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+
+    {
+      "type": "range",
+      "id": "step_label_font_size_mobile",
+      "label": "Step label font size (mobile)",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Card title font size (desktop)",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 21
+    },
+
+    {
+      "type": "range",
+      "id": "title_font_size_mobile",
+      "label": "Card title font size (mobile)",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+
+    {
+      "type": "range",
+      "id": "text_font_size",
+      "label": "Card text font size (desktop)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+
+    {
+      "type": "range",
+      "id": "text_font_size_mobile",
+      "label": "Card text font size (mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+
+    {
+      "type": "range",
+      "id": "gutter_desktop",
+      "label": "Side gutter (desktop)",
+      "min": 0,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+
+    {
+      "type": "range",
+      "id": "gutter_mobile",
+      "label": "Side gutter (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+
+    {
+    "type": "range",
+    "id": "padding_top",
+    "label": "Top padding (desktop)",
+    "min": 0,
+    "max": 160,
+    "step": 2,
+    "unit": "px",
+    "default": 76
+    },
+
+    {
+    "type": "range",
+    "id": "padding_top_mobile",
+    "label": "Top padding (mobile)",
+    "min": 0,
+    "max": 120,
+    "step": 2,
+    "unit": "px",
+    "default": 40
+    },
+
+    {
+    "type": "range",
+    "id": "padding_bottom",
+    "label": "Bottom padding (desktop)",
+    "min": 0,
+    "max": 160,
+    "step": 2,
+    "unit": "px",
+    "default": 96
+    },
+
+    {
+    "type": "range",
+    "id": "padding_bottom_mobile",
+    "label": "Bottom padding (mobile)",
+    "min": 0,
+    "max": 120,
+    "step": 2,
+    "unit": "px",
+    "default": 60
+    },
+
+    {
+      "type": "range",
+      "id": "row_head_margin_bottom",
+      "label": "Row head bottom margin (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+
+    {
+      "type": "range",
+      "id": "row_head_margin_bottom_mobile",
+      "label": "Row head bottom margin (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 30
+    },
+
+    {
+      "type": "range",
+      "id": "track_gap",
+      "label": "Gap between cards (desktop)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+
+    {
+      "type": "range",
+      "id": "track_gap_mobile",
+      "label": "Gap between cards (mobile)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+
+    {
+      "type": "range",
+      "id": "card_width",
+      "label": "Card width (desktop)",
+      "min": 240,
+      "max": 520,
+      "step": 10,
+      "unit": "px",
+      "default": 380
+    },
+
+    {
+      "type": "range",
+      "id": "card_width_mobile",
+      "label": "Card width (mobile)",
+      "min": 180,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 300
+    },
+
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Card minimum height (desktop)",
+      "min": 180,
+      "max": 480,
+      "step": 10,
+      "unit": "px",
+      "default": 300
+    },
+
+    {
+      "type": "range",
+      "id": "card_min_height_mobile",
+      "label": "Card minimum height (mobile)",
+      "min": 180,
+      "max": 480,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+
+    {
+      "type": "range",
+      "id": "spacer_width",
+      "label": "Edge spacer width (desktop)",
+      "min": 0,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 82
+    },
+
+    {
+      "type": "range",
+      "id": "spacer_width_mobile",
+      "label": "Edge spacer width (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "label": "Arrow button size (desktop)",
+      "min": 30,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 42
+    },
+
+    {
+      "type": "range",
+      "id": "arrow_size_mobile",
+      "label": "Arrow button size (mobile)",
+      "min": 30,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 38
+    },
+
+    {
+      "type": "range",
+      "id": "dots_padding_top",
+      "label": "Dots top spacing (desktop)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+
+    {
+      "type": "range",
+      "id": "dots_padding_top_mobile",
+      "label": "Dots top spacing (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 26
+    },
+
+    {
+      "type": "range",
+      "id": "dot_width",
+      "label": "Dot width (desktop)",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 30
+    },
+
+    {
+      "type": "range",
+      "id": "dot_width_mobile",
+      "label": "Dot width (mobile)",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+
+    {
+      "type": "range",
+      "id": "dot_height",
+      "label": "Dot height (desktop)",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+
+    {
+      "type": "range",
+      "id": "dot_height_mobile",
+      "label": "Dot height (mobile)",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    }
+
+  ],
+
+
+  "blocks": [
+
+    {
+      "type": "step",
+
+      "name": "Step",
+
+      "settings": [
+
+        {
+          "type": "text",
+          "id": "step_label",
+          "label": "Step label",
+          "default": "STEP 01"
+        },
+
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+
+          "options": [
+
+            {
+              "value": "palette",
+              "label": "Grid"
+            },
+
+            {
+              "value": "circles",
+              "label": "Circles"
+            },
+
+            {
+              "value": "check",
+              "label": "Check"
+            },
+
+            {
+              "value": "calendar",
+              "label": "Calendar"
+            },
+
+            {
+              "value": "collect",
+              "label": "Collect"
+            }
+
+          ],
+
+          "default": "palette"
+        },
+
+
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Choose your collection"
+        },
+
+
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "Browse the Party Petals Collection and select the pieces that suit your day."
+        }
+
+      ]
+
+    }
+
+  ],
+
+
+  "presets": [
+
+    {
+      "name": "Party How it works",
+
+      "blocks": [
+
+        {
+          "type":"step",
+          "settings":{
+            "step_label":"STEP 01",
+            "icon":"palette",
+            "title":"Choose your collection",
+            "text":"Browse the Party Petals Collection and select the pieces that suit your day."
+          }
+        },
+
+        {
+          "type":"step",
+          "settings":{
+            "step_label":"STEP 02",
+            "icon":"circles",
+            "title":"Select your colour palette",
+            "text":"There's a range of colour palettes for each design; choose the one that feels right for you."
+          }
+        },
+
+        {
+          "type":"step",
+          "settings":{
+            "step_label":"STEP 03",
+            "icon":"check",
+            "title":"Place your order",
+            "text":"Add your selections and check out online."
+          }
+        },
+
+        {
+          "type":"step",
+          "settings":{
+            "step_label":"STEP 04",
+            "icon":"calendar",
+            "title":"We take it from here",
+            "text":"Once confirmed, the wedding goes on the calendar and sourcing begins."
+          }
+        },
+
+        {
+          "type":"step",
+          "settings":{
+            "step_label":"STEP 05",
+            "icon":"collect",
+            "title":"Collect from our studio",
+            "text":"Wrapped and ready for pickup on the day, with setup guidance included."
+          }
+        }
+
+      ]
+
+    }
+
+  ]
+
+}
+{% endschema %}

@@ -1,0 +1,1976 @@
+{{ 'party-petals.css' | asset_url | stylesheet_tag }}
+
+<section
+  id="party-petals-collection-{{ section.id }}"
+  class="pp-wrap"
+  style="background-color: {{ section.settings.background_color }};"
+>
+  <div class="pp-container">
+    <div class="pp-inner">
+
+      {% if section.settings.collection != blank %}
+        {% assign pp_collection = section.settings.collection %}
+
+        <div
+          class="pp-collection"
+          style="
+            --pp-eyebrow-color: {{ section.settings.eyebrow_color }};
+            --pp-name-color: {{ section.settings.product_name_color }};
+            --pp-price-color: {{ section.settings.product_price_color }};
+            --pp-image-bg-color: {{ section.settings.image_bg_color }};
+            --pp-name-font-size: {{ section.settings.product_name_font_size }}px;
+            --pp-price-font-size: {{ section.settings.product_price_font_size }}px;
+            --pp-padding-h: {{ section.settings.padding_horizontal }}px;
+            --pp-padding-bottom: {{ section.settings.padding_bottom }}px;
+            --pp-padding-h-mobile: {{ section.settings.padding_horizontal_mobile }}px;
+            --pp-grid-gap: {{ section.settings.grid_gap }}px;
+            --pp-columns-desktop: {{ section.settings.columns_desktop }};
+            --pp-columns-mobile: {{ section.settings.columns_mobile }};
+            --pp-scrollbar-color: {{ section.settings.scrollbar_color }};
+            --pp-scrollbar-track: {{ section.settings.scrollbar_track_color }};
+            --pp-scrollbar-height: {{ section.settings.scrollbar_height }}px;
+
+            --pp-label-bg: {{ section.settings.label_background_color }};
+            --pp-label-color: {{ section.settings.label_text_color }};
+            --pp-label-font-size: {{ section.settings.label_font_size }}px;
+            --pp-label-top: {{ section.settings.label_top }}px;
+            --pp-label-left: {{ section.settings.label_left }}px;
+            --pp-label-padding-y: {{ section.settings.label_padding_vertical }}px;
+            --pp-label-padding-x: {{ section.settings.label_padding_horizontal }}px;
+          "
+        >
+
+          {% if section.settings.eyebrow != blank %}
+            <p class="pp-eyebrow pp-eyebrow--tight">
+              {{ section.settings.eyebrow }}
+            </p>
+          {% endif %}
+
+          <div
+            class="pp-grid"
+            data-pp-slider
+          >
+            {% paginate pp_collection.products by 250 %}
+              {% for product in pp_collection.products %}
+
+                {%- liquid
+                  assign pp_label_text = blank
+                  assign pp_label_bg = section.settings.label_background_color
+                  assign pp_label_color = section.settings.label_text_color
+
+                  for label_block in section.blocks
+                    if label_block.type == 'product_label' and label_block.settings.product != blank
+                      if label_block.settings.product.id == product.id and label_block.settings.label_text != blank
+                        assign pp_label_text = label_block.settings.label_text
+                        assign pp_label_bg = label_block.settings.background_color
+                        assign pp_label_color = label_block.settings.text_color
+                        break
+                      endif
+                    endif
+                  endfor
+
+                -%}
+
+                <article
+                  class="pp-product"
+                  data-pp-quick-view
+                  data-product-handle="{{ product.handle }}"
+                  data-product-url="{{ product.url }}"
+                  draggable="false"
+                >
+                  <div class="pp-product-image">
+
+                    {% if pp_label_text != blank %}
+                      <span
+                        class="pp-product-label"
+                        style="
+                          --pp-card-label-bg: {{ pp_label_bg }};
+                          --pp-card-label-color: {{ pp_label_color }};
+                        "
+                      >
+                        {{ pp_label_text }}
+                      </span>
+                    {% endif %}
+
+                    {% if product.featured_image != blank %}
+                      <img
+                        src="{{ product.featured_image | image_url: width: 900 }}"
+                        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                        loading="lazy"
+                        width="900"
+                        height="1125"
+                        draggable="false"
+                      >
+                    {% endif %}
+                  </div>
+
+                  <div class="pp-product-meta">
+                    <span class="pp-product-name">
+                      {{ product.title }}
+                    </span>
+
+                    <span class="pp-product-price">
+                      {{ product.price | money }}
+                    </span>
+
+                    <button
+                      type="button"
+                      class="pp-product-quick-add"
+                      data-pp-quick-add
+                      aria-label="Quick add {{ product.title | escape }}"
+                    >
+                      Quick Add
+                    </button>
+                  </div>
+
+                  <script type="application/json" data-pp-product-json>
+                    {
+                      "id": {{ product.id | json }},
+                      "title": {{ product.title | json }},
+                      "description": {{ product.description | strip_html | json }},
+                      "url": {{ product.url | json }},
+                      "featured_image": {% if product.featured_image != blank %}{{ product.featured_image | image_url: width: 1200 | json }}{% else %}null{% endif %},
+                      "options": [
+                        {%- for option in product.options_with_values -%}
+                          {
+                            "name": {{ option.name | json }},
+                            "values": {{ option.values | json }}
+                          }{% unless forloop.last %},{% endunless %}
+                        {%- endfor -%}
+                      ],
+                      "variants": [
+                        {%- for variant in product.variants -%}
+                          {
+                            "id": {{ variant.id | json }},
+                            "available": {{ variant.available | json }},
+                            "price": {{ variant.price | json }},
+                            "price_formatted": {{ variant.price | money | json }},
+                            "compare_at_price": {{ variant.compare_at_price | default: 0 | json }},
+                            "compare_at_price_formatted": {% if variant.compare_at_price != blank %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
+                            "options": {{ variant.options | json }},
+                            "featured_image": {% if variant.featured_image != blank %}{{ variant.featured_image | image_url: width: 1200 | json }}{% elsif variant.featured_media.preview_image != blank %}{{ variant.featured_media.preview_image | image_url: width: 1200 | json }}{% else %}null{% endif %}
+                          }{% unless forloop.last %},{% endunless %}
+                        {%- endfor -%}
+                      ]
+                    }
+                  </script>
+                </article>
+              {% endfor %}
+            {% endpaginate %}
+          </div>
+
+          <div
+            class="pp-custom-scrollbar"
+            data-pp-scrollbar
+            aria-hidden="true"
+          >
+            <div
+              class="pp-custom-scrollbar__thumb"
+              data-pp-scrollbar-thumb
+            ></div>
+          </div>
+
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div
+    class="pp-quick-view"
+    data-pp-quick-view-modal
+    data-add-url="{{ routes.cart_add_url }}.js"
+    data-cart-url="{{ routes.cart_url }}"
+    aria-hidden="true"
+  >
+    <div class="pp-quick-view__overlay" data-pp-quick-view-close></div>
+
+    <div
+      class="pp-quick-view__dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="PPQuickViewTitle-{{ section.id }}"
+      tabindex="-1"
+    >
+      <button
+        type="button"
+        class="pp-quick-view__close"
+        data-pp-quick-view-close
+        aria-label="Close quick view"
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+
+      <div class="pp-quick-view__loading" data-pp-quick-view-loading>
+        Loading product…
+      </div>
+
+      <div class="pp-quick-view__content" data-pp-quick-view-content hidden>
+        <div class="pp-quick-view__media">
+          <img data-pp-quick-view-image src="" alt="" width="900" height="1125">
+        </div>
+
+        <div class="pp-quick-view__info">
+          <p class="pp-quick-view__eyebrow">Party Petals</p>
+          <h2 id="PPQuickViewTitle-{{ section.id }}" class="pp-quick-view__title" data-pp-quick-view-title></h2>
+          <div class="pp-quick-view__price" data-pp-quick-view-price></div>
+          <div class="pp-quick-view__description" data-pp-quick-view-description></div>
+
+          <form class="pp-quick-view__form" data-pp-quick-view-form>
+            <div class="pp-quick-view__options" data-pp-quick-view-options></div>
+
+            <div class="pp-quick-view__quantity-wrap">
+              <label for="PPQuickViewQuantity-{{ section.id }}">Quantity</label>
+              <div class="pp-quick-view__quantity">
+                <button type="button" data-pp-quantity-minus aria-label="Decrease quantity">−</button>
+                <input id="PPQuickViewQuantity-{{ section.id }}" type="number" min="1" step="1" value="1" inputmode="numeric" data-pp-quick-view-quantity>
+                <button type="button" data-pp-quantity-plus aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+
+            <button type="submit" class="pp-quick-view__add" data-pp-quick-view-add>
+              <span data-pp-add-label>Add to cart</span>
+              <span class="pp-quick-view__spinner" data-pp-add-spinner hidden></span>
+            </button>
+
+            <p class="pp-quick-view__error" data-pp-quick-view-error role="alert" hidden></p>
+          </form>
+
+          <div class="pp-quick-view__success" data-pp-quick-view-success hidden>
+            <p class="pp-quick-view__success-title">Added to your cart</p>
+            <div class="pp-quick-view__success-actions">
+              <button type="button" class="pp-quick-view__continue" data-pp-continue-shopping>Continue shopping</button>
+              <a href="{{ routes.cart_url }}" class="pp-quick-view__cart" data-pp-go-cart>Go to cart</a>
+            </div>
+          </div>
+
+          <a href="#" class="pp-quick-view__full-link" data-pp-full-product-link>View full product details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+#party-petals-collection-{{ section.id }} .pp-collection {
+  padding:
+    0
+    var(--pp-padding-h, 110px)
+    var(--pp-padding-bottom, 96px);
+}
+
+#party-petals-collection-{{ section.id }} .pp-eyebrow--tight {
+  margin-bottom: 28px;
+  color: var(--pp-eyebrow-color, inherit);
+}
+
+#party-petals-collection-{{ section.id }} .pp-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 100%;
+  gap: var(--pp-grid-gap, 20px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-x pan-y;
+
+  /* Hide ugly native Windows/browser scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#party-petals-collection-{{ section.id }} .pp-grid::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+#party-petals-collection-{{ section.id }} .pp-grid.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+
+#party-petals-collection-{{ section.id }} .pp-grid.is-dragging * {
+  cursor: grabbing !important;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product {
+  flex:
+    0 0
+    calc(
+      (
+        100% -
+        (
+          (var(--pp-columns-desktop, 4) - 1)
+          * var(--pp-grid-gap, 20px)
+        )
+      )
+      / var(--pp-columns-desktop, 4)
+    );
+
+  width:
+    calc(
+      (
+        100% -
+        (
+          (var(--pp-columns-desktop, 4) - 1)
+          * var(--pp-grid-gap, 20px)
+        )
+      )
+      / var(--pp-columns-desktop, 4)
+    );
+
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-decoration: none;
+  scroll-snap-align: start;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background-color: var(--pp-image-bg-color, #F2F0E2);
+  overflow: hidden;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product-label {
+  position: absolute;
+  top: var(--pp-label-top, 12px);
+  left: var(--pp-label-left, 12px);
+  z-index: 3;
+  font-family: Poppins, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  max-width: calc(100% - (var(--pp-label-left, 12px) * 2));
+
+  padding:
+    var(--pp-label-padding-y, 8px)
+    var(--pp-label-padding-x, 14px);
+
+  background:
+    var(--pp-card-label-bg, var(--pp-label-bg, #264A3D));
+
+  color:
+    var(--pp-card-label-color, var(--pp-label-color, #FFFFFF));
+
+  font-family: Poppins, sans-serif;
+  font-size: var(--pp-label-font-size, 12px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+
+  text-align: center;
+
+  border-radius: 0;
+
+  pointer-events: none;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product-name {
+  font-family: Poppins, sans-serif;
+  font-weight: 500;
+  font-size: var(--pp-name-font-size, 12px);
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--pp-name-color, #264A3D);
+  font-family: Poppins, sans-serif;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product-price {
+  font-size: var(--pp-price-font-size, 13px);
+  line-height: 1.4;
+  color: var(--pp-price-color, #264A3D);
+  opacity: 0.7;
+  font-family: Poppins, sans-serif;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product {
+  cursor: pointer;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product-quick-add {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 8px;
+  padding: 9px 14px;
+  border: 1px solid var(--pp-name-color, #264A3D);
+  border-radius: 0;
+  background: transparent;
+  color: var(--pp-name-color, #264A3D);
+  font-family: Poppins, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+#party-petals-collection-{{ section.id }} .pp-product-quick-add:hover,
+#party-petals-collection-{{ section.id }} .pp-product-quick-add:focus-visible {
+  background: var(--pp-name-color, #264A3D);
+  color: #ffffff;
+}
+
+#party-petals-collection-{{ section.id }} .pp-grid.is-dragging .pp-product-quick-add {
+  pointer-events: none;
+}
+
+@media screen and (max-width: 749px) {
+  #party-petals-collection-{{ section.id }} .pp-product-quick-add {
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+}
+
+/* Clean custom scrollbar */
+#party-petals-collection-{{ section.id }} .pp-custom-scrollbar {
+  position: relative;
+  width: 100%;
+  height: var(--pp-scrollbar-height, 4px);
+  margin-top: 28px;
+  background: var(--pp-scrollbar-track, #D9D9D0);
+  border-radius: 999px;
+  overflow: hidden;
+  cursor: pointer;
+  touch-action: none;
+}
+
+#party-petals-collection-{{ section.id }} .pp-custom-scrollbar__thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 30%;
+  background: var(--pp-scrollbar-color, #264A3D);
+  border-radius: 999px;
+  cursor: grab;
+  transform: translateX(0);
+  will-change: transform;
+}
+
+#party-petals-collection-{{ section.id }} .pp-custom-scrollbar__thumb.is-dragging {
+  cursor: grabbing;
+}
+
+#party-petals-collection-{{ section.id }} .pp-custom-scrollbar.is-hidden {
+  display: none;
+}
+
+@media screen and (max-width: 749px) {
+  #party-petals-collection-{{ section.id }} .pp-collection {
+    padding-left: var(--pp-padding-h-mobile, 24px);
+    padding-right: var(--pp-padding-h-mobile, 24px);
+    padding-bottom: 50px;
+  }
+
+  #party-petals-collection-{{ section.id }} .pp-grid {
+    scroll-snap-type: x mandatory;
+  }
+
+  #party-petals-collection-{{ section.id }} .pp-product {
+    flex:
+      0 0
+      calc(
+        (
+          100% -
+          (
+            (var(--pp-columns-mobile, 2) - 1)
+            * var(--pp-grid-gap, 20px)
+          )
+        )
+        / var(--pp-columns-mobile, 2)
+      );
+
+    width:
+      calc(
+        (
+          100% -
+          (
+            (var(--pp-columns-mobile, 2) - 1)
+            * var(--pp-grid-gap, 20px)
+          )
+        )
+        / var(--pp-columns-mobile, 2)
+      );
+
+    scroll-snap-align: start;
+  }
+
+  #party-petals-collection-{{ section.id }} .pp-custom-scrollbar {
+    margin-top: 24px;
+  }
+}
+
+
+/* ================================
+   Party Petals Quick View
+================================ */
+#party-petals-collection-{{ section.id }} .pp-quick-view {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-family: Poppins, sans-serif;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view.is-open { display: flex; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 30, 25, 0.58);
+  backdrop-filter: blur(2px);
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__dialog {
+  position: relative;
+  z-index: 2;
+  border-radius:0;
+  width: min(980px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: #fff;
+  color: #264A3D;
+  {% comment %} box-shadow: 0 24px 70px rgba(0,0,0,.2); {% endcomment %}
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 4;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(38,74,61,.18);
+  border-radius: 50%;
+  background: #fff;
+  color: #264A3D;
+  font-size: 29px;
+  line-height: 1;
+  cursor: pointer;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__loading {
+  padding: 80px 24px;
+  text-align: center;
+  font-family: Poppins, sans-serif;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__content {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(360px,.85fr);
+  min-height: 520px;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__media {
+  min-height: 520px;
+  {% comment %} background: var(--pp-image-bg-color,#F2F0E2); {% endcomment %}
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  border-radius:0;
+  max-height: 720px;
+  object-fit: cover;
+  background: var(--pp-image-bg-color, #F2F0E2);
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__info {
+  display: flex;
+  flex-direction: column;
+  padding: 52px 44px 38px;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__eyebrow {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #6D8178;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__title {
+  margin: 0;
+  font-size: clamp(22px,2.4vw,32px);
+  font-weight:400;
+  line-height: 1.25;
+  color: #000;
+  font-family: Poppins, sans-serif;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__price {
+  margin-top: 12px;
+  font-size: 17px;
+  color: #000;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__compare-price {
+  margin-left: 8px;
+  opacity: .55;
+  text-decoration: line-through;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__description {
+  margin-top: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  color:#000;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__description:empty { display: none; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__form { margin-top: 24px; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__option { margin-bottom: 18px; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__option label,
+#party-petals-collection-{{ section.id }} .pp-quick-view__quantity-wrap > label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: Poppins,sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  color:#000;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__option select {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 40px 10px 14px;
+  border: 1px solid rgba(38,74,61,.3);
+  border-radius: 0;
+  background: #fff;
+  color:#000;
+  font: inherit;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__quantity {
+  display: inline-grid;
+  grid-template-columns: 42px 64px 42px;
+  align-items: stretch;
+  border: 1px solid rgba(38,74,61,.3);
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__quantity button,
+#party-petals-collection-{{ section.id }} .pp-quick-view__quantity input {
+  height: 44px;
+  border: 0;
+  background: #fff;
+  color:#000;
+  margin:0;
+  text-align: center;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__quantity button { font-size: 20px; cursor: pointer; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__quantity input { width: 64px; -moz-appearance: textfield; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__quantity input::-webkit-outer-spin-button,
+#party-petals-collection-{{ section.id }} .pp-quick-view__quantity input::-webkit-inner-spin-button { margin:0; -webkit-appearance:none; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__add,
+#party-petals-collection-{{ section.id }} .pp-quick-view__continue,
+#party-petals-collection-{{ section.id }} .pp-quick-view__cart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 12px;
+  border: 1px solid #000;
+  border-radius: 0;
+  font-family: Poppins,sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__add {
+  width: 100%;
+  margin-top: 22px;
+  background: #264A3D;
+  color: #fff;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__add:disabled { opacity:.48; cursor:not-allowed; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__spinner {
+  width: 16px;
+  height: 16px;
+  margin-left: 9px;
+  border: 2px solid rgba(255,255,255,.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ppQuickViewSpin .7s linear infinite;
+}
+@keyframes ppQuickViewSpin { to { transform: rotate(360deg); } }
+#party-petals-collection-{{ section.id }} .pp-quick-view__error {
+  margin: 12px 0 0;
+  color: #a43b3b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__success {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(38,74,61,.15);
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__success-title {
+  margin: 0 0 14px;
+  font-family: Poppins,sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__success-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+#party-petals-collection-{{ section.id }} .pp-quick-view__continue { background:#fff; color:#264A3D; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__cart { background:#264A3D; color:#fff; }
+#party-petals-collection-{{ section.id }} .pp-quick-view__full-link {
+  align-self: flex-start;
+  margin-top: 18px;
+  color:#000;
+  font-size: 12px;
+  text-underline-offset: 4px;
+}
+body.pp-quick-view-open { overflow:hidden; }
+@media screen and (max-width: 749px) {
+  #party-petals-collection-{{ section.id }} .pp-quick-view { padding:0; align-items:flex-end; }
+  #party-petals-collection-{{ section.id }} .pp-quick-view__dialog { width:100%; max-height:100vh; }
+  #party-petals-collection-{{ section.id }} .pp-quick-view__content { grid-template-columns:1fr; min-height:0; }
+  #party-petals-collection-{{ section.id }} .pp-quick-view__media { min-height:0; aspect-ratio:4/3; }
+  #party-petals-collection-{{ section.id }} .pp-quick-view__media img { min-height:0; height:100%; max-height:none; }
+  #party-petals-collection-{{ section.id }} .pp-quick-view__info { padding:28px 20px 24px; }
+  #party-petals-collection-{{ section.id }} .pp-quick-view__success-actions { grid-template-columns:1fr; }
+}
+
+</style>
+
+<script>
+(function () {
+  const section = document.getElementById(
+    'party-petals-collection-{{ section.id }}'
+  );
+
+  if (!section) return;
+
+  const slider = section.querySelector('[data-pp-slider]');
+  const scrollbar = section.querySelector('[data-pp-scrollbar]');
+  const thumb = section.querySelector('[data-pp-scrollbar-thumb]');
+
+  if (!slider || !scrollbar || !thumb) return;
+
+  /* Product row mouse drag */
+  let isDraggingSlider = false;
+  let sliderStartX = 0;
+  let sliderStartScrollLeft = 0;
+  let sliderDragDistance = 0;
+  let preventProductClick = false;
+
+  function handleSliderMouseDown(event) {
+    if (event.button !== 0) return;
+
+    isDraggingSlider = true;
+    sliderDragDistance = 0;
+    preventProductClick = false;
+
+    sliderStartX = event.clientX;
+    sliderStartScrollLeft = slider.scrollLeft;
+
+    slider.classList.add('is-dragging');
+  }
+
+  function handleSliderMouseMove(event) {
+    if (!isDraggingSlider) return;
+
+    const movement = event.clientX - sliderStartX;
+
+    sliderDragDistance = Math.abs(movement);
+
+    if (sliderDragDistance > 5) {
+      preventProductClick = true;
+      event.preventDefault();
+    }
+
+    slider.scrollLeft = sliderStartScrollLeft - movement;
+  }
+
+  function stopSliderDrag() {
+    if (!isDraggingSlider) return;
+
+    isDraggingSlider = false;
+    slider.classList.remove('is-dragging');
+
+    window.setTimeout(function () {
+      preventProductClick = false;
+    }, 120);
+  }
+
+  slider.addEventListener('mousedown', handleSliderMouseDown);
+  window.addEventListener('mousemove', handleSliderMouseMove);
+  window.addEventListener('mouseup', stopSliderDrag);
+  window.addEventListener('blur', stopSliderDrag);
+
+  slider.addEventListener(
+    'click',
+    function (event) {
+      if (!preventProductClick) return;
+
+      const productLink = event.target.closest('.pp-product');
+
+      if (!productLink) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    true
+  );
+
+  slider.addEventListener('dragstart', function (event) {
+    event.preventDefault();
+  });
+
+  /* Custom scrollbar */
+  let thumbWidth = 0;
+  let maxThumbTravel = 0;
+  let maxSliderScroll = 0;
+
+  function updateScrollbarMeasurements() {
+    const visibleWidth = slider.clientWidth;
+    const totalWidth = slider.scrollWidth;
+    const trackWidth = scrollbar.clientWidth;
+
+    if (
+      visibleWidth <= 0 ||
+      totalWidth <= visibleWidth + 1 ||
+      trackWidth <= 0
+    ) {
+      scrollbar.classList.add('is-hidden');
+      return;
+    }
+
+    scrollbar.classList.remove('is-hidden');
+
+    const visibleRatio = visibleWidth / totalWidth;
+
+    thumbWidth = Math.max(
+      44,
+      Math.min(trackWidth, trackWidth * visibleRatio)
+    );
+
+    thumb.style.width = thumbWidth + 'px';
+
+    maxThumbTravel = Math.max(0, trackWidth - thumbWidth);
+    maxSliderScroll = Math.max(0, totalWidth - visibleWidth);
+
+    syncThumbWithSlider();
+  }
+
+  function syncThumbWithSlider() {
+    if (maxSliderScroll <= 0 || maxThumbTravel <= 0) {
+      thumb.style.transform = 'translateX(0px)';
+      return;
+    }
+
+    const progress = slider.scrollLeft / maxSliderScroll;
+
+    const thumbX = Math.max(
+      0,
+      Math.min(
+        maxThumbTravel,
+        progress * maxThumbTravel
+      )
+    );
+
+    thumb.style.transform =
+      'translateX(' + thumbX + 'px)';
+  }
+
+  slider.addEventListener(
+    'scroll',
+    function () {
+      window.requestAnimationFrame(syncThumbWithSlider);
+    },
+    { passive: true }
+  );
+
+  /* Click custom scrollbar track */
+  scrollbar.addEventListener('click', function (event) {
+    if (event.target === thumb) return;
+
+    const rect = scrollbar.getBoundingClientRect();
+
+    let desiredThumbX =
+      event.clientX - rect.left - thumbWidth / 2;
+
+    desiredThumbX = Math.max(
+      0,
+      Math.min(
+        maxThumbTravel,
+        desiredThumbX
+      )
+    );
+
+    const progress =
+      maxThumbTravel > 0
+        ? desiredThumbX / maxThumbTravel
+        : 0;
+
+    slider.scrollTo({
+      left: progress * maxSliderScroll,
+      behavior: 'smooth'
+    });
+  });
+
+  /* Drag custom scrollbar thumb */
+  let isDraggingThumb = false;
+  let thumbStartX = 0;
+  let thumbStartTranslate = 0;
+
+  function getCurrentThumbTranslate() {
+    if (maxSliderScroll <= 0 || maxThumbTravel <= 0) {
+      return 0;
+    }
+
+    return (
+      slider.scrollLeft /
+      maxSliderScroll *
+      maxThumbTravel
+    );
+  }
+
+  function startThumbDrag(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    isDraggingThumb = true;
+    thumb.classList.add('is-dragging');
+
+    thumbStartX = event.clientX;
+    thumbStartTranslate = getCurrentThumbTranslate();
+
+    if (thumb.setPointerCapture) {
+      try {
+        thumb.setPointerCapture(event.pointerId);
+      } catch (error) {}
+    }
+  }
+
+  function moveThumb(event) {
+    if (!isDraggingThumb) return;
+
+    event.preventDefault();
+
+    const movement = event.clientX - thumbStartX;
+
+    const nextThumbX = Math.max(
+      0,
+      Math.min(
+        maxThumbTravel,
+        thumbStartTranslate + movement
+      )
+    );
+
+    const progress =
+      maxThumbTravel > 0
+        ? nextThumbX / maxThumbTravel
+        : 0;
+
+    slider.scrollLeft =
+      progress * maxSliderScroll;
+  }
+
+  function stopThumbDrag(event) {
+    if (!isDraggingThumb) return;
+
+    isDraggingThumb = false;
+    thumb.classList.remove('is-dragging');
+
+    if (event && thumb.releasePointerCapture) {
+      try {
+        thumb.releasePointerCapture(event.pointerId);
+      } catch (error) {}
+    }
+  }
+
+  thumb.addEventListener('pointerdown', startThumbDrag);
+
+  window.addEventListener(
+    'pointermove',
+    moveThumb,
+    { passive: false }
+  );
+
+  window.addEventListener('pointerup', stopThumbDrag);
+  window.addEventListener('pointercancel', stopThumbDrag);
+
+  /* Resize / initialize */
+  let resizeTimer;
+
+  function handleResize() {
+    window.clearTimeout(resizeTimer);
+
+    resizeTimer = window.setTimeout(
+      updateScrollbarMeasurements,
+      100
+    );
+  }
+
+  window.addEventListener('resize', handleResize);
+
+  window.requestAnimationFrame(
+    updateScrollbarMeasurements
+  );
+
+  window.addEventListener(
+    'load',
+    updateScrollbarMeasurements,
+    { once: true }
+  );
+
+
+  /* Dynamic product quick view */
+  const quickView = section.querySelector('[data-pp-quick-view-modal]');
+  const quickViewDialog = quickView ? quickView.querySelector('.pp-quick-view__dialog') : null;
+  const quickViewLoading = quickView ? quickView.querySelector('[data-pp-quick-view-loading]') : null;
+  const quickViewContent = quickView ? quickView.querySelector('[data-pp-quick-view-content]') : null;
+  const quickViewImage = quickView ? quickView.querySelector('[data-pp-quick-view-image]') : null;
+  const quickViewTitle = quickView ? quickView.querySelector('[data-pp-quick-view-title]') : null;
+  const quickViewPrice = quickView ? quickView.querySelector('[data-pp-quick-view-price]') : null;
+  const quickViewDescription = quickView ? quickView.querySelector('[data-pp-quick-view-description]') : null;
+  const quickViewOptions = quickView ? quickView.querySelector('[data-pp-quick-view-options]') : null;
+  const quickViewForm = quickView ? quickView.querySelector('[data-pp-quick-view-form]') : null;
+  const quickViewQuantity = quickView ? quickView.querySelector('[data-pp-quick-view-quantity]') : null;
+  const quickViewAdd = quickView ? quickView.querySelector('[data-pp-quick-view-add]') : null;
+  const quickViewAddLabel = quickView ? quickView.querySelector('[data-pp-add-label]') : null;
+  const quickViewSpinner = quickView ? quickView.querySelector('[data-pp-add-spinner]') : null;
+  const quickViewError = quickView ? quickView.querySelector('[data-pp-quick-view-error]') : null;
+  const quickViewSuccess = quickView ? quickView.querySelector('[data-pp-quick-view-success]') : null;
+  const continueShopping = quickView ? quickView.querySelector('[data-pp-continue-shopping]') : null;
+  const fullProductLink = quickView ? quickView.querySelector('[data-pp-full-product-link]') : null;
+  const quantityMinus = quickView ? quickView.querySelector('[data-pp-quantity-minus]') : null;
+  const quantityPlus = quickView ? quickView.querySelector('[data-pp-quantity-plus]') : null;
+
+  let currentQuickViewProduct = null;
+  let currentQuickViewVariant = null;
+  let lastQuickViewTrigger = null;
+  let quickViewRequestId = 0;
+
+  function formatMoney(cents) {
+    const value = Number(cents || 0) / 100;
+    try {
+      return new Intl.NumberFormat(document.documentElement.lang || 'en', {
+        style: 'currency',
+        currency: '{{ cart.currency.iso_code | default: shop.currency }}'
+      }).format(value);
+    } catch (error) {
+      return '$' + value.toFixed(2);
+    }
+  }
+
+  function stripHtml(html) {
+    const holder = document.createElement('div');
+    holder.innerHTML = html || '';
+    return (holder.textContent || holder.innerText || '').trim();
+  }
+
+  function getVariantImage(variant, product) {
+    if (
+      variant &&
+      typeof variant.featured_image === 'string' &&
+      variant.featured_image
+    ) {
+      return variant.featured_image;
+    }
+
+    if (
+      variant &&
+      variant.featured_image &&
+      typeof variant.featured_image.src === 'string'
+    ) {
+      return variant.featured_image.src;
+    }
+
+    if (
+      variant &&
+      variant.featured_media &&
+      variant.featured_media.preview_image &&
+      typeof variant.featured_media.preview_image.src === 'string'
+    ) {
+      return variant.featured_media.preview_image.src;
+    }
+
+    if (
+      product &&
+      typeof product.featured_image === 'string' &&
+      product.featured_image
+    ) {
+      return product.featured_image;
+    }
+
+    if (
+      product &&
+      product.featured_image &&
+      typeof product.featured_image.src === 'string'
+    ) {
+      return product.featured_image.src;
+    }
+
+    return '';
+  }
+
+  let quickViewImageRequest = 0;
+
+  function setQuickViewImage(src, alt) {
+    if (!quickViewImage || !src) return;
+
+    const nextSrc = String(src);
+    const requestId = ++quickViewImageRequest;
+
+    /*
+      If this image is already displayed/cached, swap immediately.
+      Otherwise keep the previous image visible until the new one
+      has loaded, so the modal never flashes a blank image area.
+    */
+    if (
+      quickViewImage.currentSrc === nextSrc ||
+      quickViewImage.src === nextSrc
+    ) {
+      quickViewImage.alt = alt || '';
+      return;
+    }
+
+    const preload = new Image();
+
+    preload.onload = function () {
+      if (requestId !== quickViewImageRequest) return;
+
+      quickViewImage.src = nextSrc;
+      quickViewImage.alt = alt || '';
+    };
+
+    preload.onerror = function () {
+      if (requestId !== quickViewImageRequest) return;
+
+      /*
+        Keep the previous image instead of clearing the image area.
+      */
+    };
+
+    preload.src = nextSrc;
+  }
+
+  function preloadProductVariantImages(product) {
+    if (!product || !Array.isArray(product.variants)) return;
+
+    const seen = new Set();
+
+    product.variants.forEach(function (variant) {
+      const src = getVariantImage(variant, product);
+
+      if (!src || seen.has(src)) return;
+
+      seen.add(src);
+
+      const image = new Image();
+      image.src = src;
+    });
+  }
+
+  function selectedOptionValues() {
+    if (!quickViewOptions) return [];
+    return Array.from(quickViewOptions.querySelectorAll('[data-pp-option-select]')).map(function (select) {
+      return select.value;
+    });
+  }
+
+  function findSelectedVariant() {
+    if (!currentQuickViewProduct || !Array.isArray(currentQuickViewProduct.variants)) return null;
+    const values = selectedOptionValues();
+    if (!values.length) {
+      return currentQuickViewProduct.variants.find(function (variant) { return variant.available; }) || currentQuickViewProduct.variants[0] || null;
+    }
+    return currentQuickViewProduct.variants.find(function (variant) {
+      const variantOptions = Array.isArray(variant.options)
+        ? variant.options
+        : [
+            variant.option1,
+            variant.option2,
+            variant.option3
+          ].slice(0, values.length);
+
+      return variantOptions.every(function (value, index) {
+        return String(value) === String(values[index]);
+      });
+    }) || null;
+  }
+
+  function updateQuickViewVariant() {
+    currentQuickViewVariant = findSelectedVariant();
+    if (!currentQuickViewVariant) {
+      quickViewPrice.textContent = '';
+      quickViewAdd.disabled = true;
+      quickViewAddLabel.textContent = 'Unavailable';
+      return;
+    }
+
+    quickViewPrice.innerHTML = '';
+    const currentPriceEl = document.createElement('span');
+    currentPriceEl.textContent =
+      currentQuickViewVariant.price_formatted ||
+      formatMoney(currentQuickViewVariant.price);
+    quickViewPrice.appendChild(currentPriceEl);
+
+    const compareAt = Number(currentQuickViewVariant.compare_at_price || 0);
+    if (compareAt > Number(currentQuickViewVariant.price || 0)) {
+      const comparePriceEl = document.createElement('span');
+      comparePriceEl.className = 'pp-quick-view__compare-price';
+      comparePriceEl.textContent =
+        currentQuickViewVariant.compare_at_price_formatted ||
+        formatMoney(compareAt);
+      quickViewPrice.appendChild(comparePriceEl);
+    }
+
+    const imageSrc = getVariantImage(
+      currentQuickViewVariant,
+      currentQuickViewProduct
+    );
+
+    if (imageSrc) {
+      setQuickViewImage(
+        imageSrc,
+        currentQuickViewProduct.title || 'Product image'
+      );
+    }
+
+    const available = Boolean(currentQuickViewVariant.available);
+    quickViewAdd.disabled = !available;
+    quickViewAddLabel.textContent = available ? 'Add to cart' : 'Sold out';
+    quickViewError.hidden = true;
+  }
+
+  function buildQuickViewOptions(product) {
+    quickViewOptions.innerHTML = '';
+
+    if (
+      !product ||
+      !Array.isArray(product.variants) ||
+      !product.variants.length
+    ) {
+      return;
+    }
+
+    const rawOptions = Array.isArray(product.options)
+      ? product.options
+      : [];
+
+    const optionDefinitions = rawOptions.map(function (option, index) {
+      if (typeof option === 'string') {
+        const values = [];
+
+        product.variants.forEach(function (variant) {
+          const value = Array.isArray(variant.options)
+            ? variant.options[index]
+            : variant['option' + (index + 1)];
+
+          if (
+            value != null &&
+            values.indexOf(String(value)) === -1
+          ) {
+            values.push(String(value));
+          }
+        });
+
+        return {
+          name: option,
+          values: values
+        };
+      }
+
+      return {
+        name: option && option.name
+          ? option.name
+          : 'Option ' + (index + 1),
+        values:
+          option && Array.isArray(option.values)
+            ? option.values.map(String)
+            : []
+      };
+    });
+
+    const hasOnlyDefault =
+      optionDefinitions.length === 1 &&
+      optionDefinitions[0].name === 'Title' &&
+      optionDefinitions[0].values.length === 1 &&
+      optionDefinitions[0].values[0] === 'Default Title';
+
+    if (!optionDefinitions.length || hasOnlyDefault) return;
+
+    optionDefinitions.forEach(function (option, optionIndex) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'pp-quick-view__option';
+
+      const label = document.createElement('label');
+      const selectId =
+        'PPQuickViewOption-{{ section.id }}-' + optionIndex;
+
+      label.setAttribute('for', selectId);
+      label.textContent = option.name;
+
+      const select = document.createElement('select');
+      select.id = selectId;
+      select.setAttribute('data-pp-option-select', '');
+
+      option.values.forEach(function (value) {
+        const optionEl = document.createElement('option');
+        optionEl.value = value;
+        optionEl.textContent = value;
+        select.appendChild(optionEl);
+      });
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(select);
+      quickViewOptions.appendChild(wrapper);
+    });
+
+    const initialVariant =
+      product.variants.find(function (variant) {
+        return variant.available;
+      }) || product.variants[0];
+
+    if (initialVariant) {
+      const initialOptions = Array.isArray(initialVariant.options)
+        ? initialVariant.options
+        : [
+            initialVariant.option1,
+            initialVariant.option2,
+            initialVariant.option3
+          ];
+
+      Array.from(
+        quickViewOptions.querySelectorAll('[data-pp-option-select]')
+      ).forEach(function (select, index) {
+        if (initialOptions[index] != null) {
+          select.value = String(initialOptions[index]);
+        }
+      });
+    }
+  }
+
+  function renderQuickViewProduct(product, productCard) {
+    currentQuickViewProduct = product;
+
+    quickViewTitle.textContent = product.title || '';
+    quickViewDescription.textContent =
+      stripHtml(product.description || '');
+
+    /*
+      Show the already-loaded collection-card image immediately.
+      This removes the empty/cream image area when opening Quick Add.
+    */
+    const cardImage = productCard.querySelector('.pp-product-image img');
+
+    if (cardImage) {
+      const cardSrc =
+        cardImage.currentSrc ||
+        cardImage.src ||
+        '';
+
+      if (cardSrc) {
+        quickViewImage.src = cardSrc;
+        quickViewImage.alt =
+          cardImage.alt ||
+          product.title ||
+          'Product image';
+      }
+    } else if (product.featured_image) {
+      quickViewImage.src = product.featured_image;
+      quickViewImage.alt = product.title || 'Product image';
+    }
+
+    buildQuickViewOptions(product);
+    updateQuickViewVariant();
+
+    /*
+      Preload only this product's variant images in the background.
+      Subsequent Color/Size changes feel instant.
+    */
+    window.setTimeout(function () {
+      preloadProductVariantImages(product);
+    }, 0);
+
+    if (fullProductLink) {
+      fullProductLink.href =
+        productCard.dataset.productUrl || '#';
+    }
+
+    quickViewLoading.hidden = true;
+    quickViewContent.hidden = false;
+  }
+
+  function openQuickView(productCard) {
+    if (!quickView || !productCard) return;
+
+    lastQuickViewTrigger =
+      productCard.querySelector('[data-pp-quick-add]') ||
+      productCard;
+
+    quickViewRequestId += 1;
+
+    quickViewSuccess.hidden = true;
+    quickViewForm.hidden = false;
+    quickViewError.hidden = true;
+    quickViewQuantity.value = 1;
+    quickViewAdd.disabled = true;
+    quickViewAddLabel.textContent = 'Add to cart';
+
+    const inlineJson =
+      productCard.querySelector('[data-pp-product-json]');
+
+    if (!inlineJson) {
+      window.location.href =
+        productCard.dataset.productUrl || '#';
+      return;
+    }
+
+    try {
+      const product = JSON.parse(
+        inlineJson.textContent.trim()
+      );
+
+      /*
+        No fetch and no loading screen:
+        all required product/variant data is already in the card.
+      */
+      quickViewLoading.hidden = true;
+
+      renderQuickViewProduct(product, productCard);
+
+      quickView.classList.add('is-open');
+      quickView.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('pp-quick-view-open');
+
+      window.requestAnimationFrame(function () {
+        if (quickViewDialog) quickViewDialog.focus();
+      });
+    } catch (error) {
+      /*
+        Safe fallback if the inline data was somehow invalid.
+      */
+      window.location.href =
+        productCard.dataset.productUrl || '#';
+    }
+  }
+  function closeQuickView() {
+    if (!quickView) return;
+    quickViewRequestId += 1;
+    quickView.classList.remove('is-open');
+    quickView.setAttribute('aria-hidden','true');
+    document.body.classList.remove('pp-quick-view-open');
+    currentQuickViewProduct = null;
+    currentQuickViewVariant = null;
+    if (lastQuickViewTrigger) lastQuickViewTrigger.focus();
+  }
+
+  slider.addEventListener('click', function (event) {
+    const productCard = event.target.closest('[data-pp-quick-view]');
+
+    if (!productCard) return;
+
+    if (preventProductClick) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    event.preventDefault();
+    openQuickView(productCard);
+  });
+
+  if (quickView) {
+    quickView.querySelectorAll('[data-pp-quick-view-close]').forEach(function (button) {
+      button.addEventListener('click', closeQuickView);
+    });
+    continueShopping.addEventListener('click', closeQuickView);
+    quickViewOptions.addEventListener('change', updateQuickViewVariant);
+
+    quantityMinus.addEventListener('click', function () {
+      const current = Math.max(1, parseInt(quickViewQuantity.value || '1', 10));
+      quickViewQuantity.value = Math.max(1, current - 1);
+    });
+    quantityPlus.addEventListener('click', function () {
+      const current = Math.max(1, parseInt(quickViewQuantity.value || '1', 10));
+      quickViewQuantity.value = current + 1;
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && quickView.classList.contains('is-open')) closeQuickView();
+    });
+
+    async function updateHeaderCartCount() {
+      try {
+        const cartResponse = await fetch('{{ routes.cart_url }}.js', {
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: {
+            Accept: 'application/json'
+          },
+          cache: 'no-store'
+        });
+
+        if (!cartResponse.ok) return;
+
+        const cart = await cartResponse.json();
+        const itemCount = Number(cart.item_count || 0);
+
+        /*
+          Dawn / common Shopify header cart badge.
+        */
+        const cartIcon = document.querySelector('#cart-icon-bubble');
+
+        if (cartIcon) {
+          let bubble = cartIcon.querySelector('.cart-count-bubble');
+
+          if (itemCount > 0) {
+            if (!bubble) {
+              bubble = document.createElement('div');
+              bubble.className = 'cart-count-bubble';
+              bubble.innerHTML =
+                '<span aria-hidden="true"></span>' +
+                '<span class="visually-hidden"></span>';
+              cartIcon.appendChild(bubble);
+            }
+
+            const visibleCount = bubble.querySelector(
+              'span[aria-hidden="true"]'
+            );
+
+            const hiddenCount = bubble.querySelector(
+              '.visually-hidden'
+            );
+
+            if (visibleCount) {
+              visibleCount.textContent =
+                itemCount < 100 ? String(itemCount) : '';
+            }
+
+            if (hiddenCount) {
+              hiddenCount.textContent =
+                itemCount + (itemCount === 1 ? ' item' : ' items');
+            }
+
+            bubble.hidden = false;
+          } else if (bubble) {
+            bubble.remove();
+          }
+        }
+
+        /*
+          This theme stores the cart quantity on the header cart link:
+          <a class="header--cart" data-cart-count="...">
+
+          IMPORTANT:
+          Do NOT set textContent on [data-cart-count].
+          The theme reads the attribute (usually with CSS ::after),
+          so changing textContent creates a second visible number.
+        */
+        document.querySelectorAll('[data-cart-count]').forEach(function (element) {
+          element.setAttribute(
+            'data-cart-count',
+            String(itemCount)
+          );
+        });
+
+        /*
+          Optional fallback for themes that use a real text node/badge
+          instead of the data-cart-count attribute.
+        */
+        document.querySelectorAll(
+          '[data-cart-count-bubble], .header__cart-count'
+        ).forEach(function (element) {
+          element.textContent = String(itemCount);
+
+          if ('hidden' in element) {
+            element.hidden = itemCount <= 0;
+          }
+        });
+
+        /*
+          Extra event for themes that already listen for cart updates.
+        */
+        document.dispatchEvent(
+          new CustomEvent('cart:count-updated', {
+            bubbles: true,
+            detail: {
+              cart: cart,
+              itemCount: itemCount
+            }
+          })
+        );
+      } catch (error) {
+        console.warn(
+          '[Party Petals] Header cart count refresh failed:',
+          error
+        );
+      }
+    }
+
+    quickViewForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      updateQuickViewVariant();
+      if (!currentQuickViewVariant || !currentQuickViewVariant.available) return;
+
+      const quantity = Math.max(1, parseInt(quickViewQuantity.value || '1', 10));
+      quickViewAdd.disabled = true;
+      quickViewSpinner.hidden = false;
+      quickViewError.hidden = true;
+      quickViewAddLabel.textContent = 'Adding…';
+
+      try {
+        const response = await fetch(quickView.dataset.addUrl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ items: [{ id: currentQuickViewVariant.id, quantity: quantity }] })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.description || result.message || 'Unable to add this product to cart.');
+
+        quickViewForm.hidden = true;
+        quickViewSuccess.hidden = false;
+
+        /*
+          Refresh the header badge immediately after AJAX add-to-cart.
+        */
+        await updateHeaderCartCount();
+
+        document.dispatchEvent(
+          new CustomEvent('cart:refresh', {
+            bubbles: true,
+            detail: {
+              source: 'party-petals-quick-view'
+            }
+          })
+        );
+
+        document.dispatchEvent(
+          new CustomEvent('cart:updated', {
+            bubbles: true,
+            detail: result
+          })
+        );
+      } catch (error) {
+        quickViewError.textContent = error.message || 'Unable to add this product to cart.';
+        quickViewError.hidden = false;
+        quickViewAdd.disabled = !currentQuickViewVariant.available;
+      } finally {
+        quickViewSpinner.hidden = true;
+        if (!quickViewSuccess.hidden) quickViewAddLabel.textContent = 'Added';
+        else quickViewAddLabel.textContent = currentQuickViewVariant && currentQuickViewVariant.available ? 'Add to cart' : 'Sold out';
+      }
+    });
+  }
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Party Petals — Collection",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#264A3D"
+    },
+    {
+      "type": "color",
+      "id": "product_name_color",
+      "label": "Product name color",
+      "default": "#264A3D"
+    },
+    {
+      "type": "color",
+      "id": "product_price_color",
+      "label": "Product price color",
+      "default": "#264A3D"
+    },
+    {
+      "type": "color",
+      "id": "image_bg_color",
+      "label": "Image placeholder background",
+      "default": "#F2F0E2"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "The collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection to display"
+    },
+    {
+      "type": "header",
+      "content": "Product labels"
+    },
+    {
+      "type": "color",
+      "id": "label_background_color",
+      "label": "Default label background",
+      "default": "#264A3D"
+    },
+    {
+      "type": "color",
+      "id": "label_text_color",
+      "label": "Default label text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "label_top",
+      "label": "Label top spacing",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "label_left",
+      "label": "Label left spacing",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "label_padding_vertical",
+      "label": "Label vertical padding",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "label_padding_horizontal",
+      "label": "Label horizontal padding",
+      "min": 8,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "product_name_font_size",
+      "label": "Product name font size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "product_price_font_size",
+      "label": "Product price font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Spacing & layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Side padding (desktop)",
+      "min": 0,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal_mobile",
+      "label": "Side padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Product gap",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Visible products desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Visible products mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Scrollbar"
+    },
+    {
+      "type": "color",
+      "id": "scrollbar_color",
+      "label": "Scrollbar active color",
+      "default": "#264A3D"
+    },
+    {
+      "type": "color",
+      "id": "scrollbar_track_color",
+      "label": "Scrollbar track color",
+      "default": "#D9D9D0"
+    },
+    {
+      "type": "range",
+      "id": "scrollbar_height",
+      "label": "Scrollbar height",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Party Petals — Collection"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_label",
+      "name": "Product label",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Select the same product from \"The Collection\" to apply this label."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "label_text",
+          "label": "Custom label",
+          "default": "2 Pieces Recommended"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Label background",
+          "default": "#355B25"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Label text color",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 50
+}
+{% endschema %}

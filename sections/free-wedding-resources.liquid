@@ -1,0 +1,525 @@
+{%- liquid
+  assign section_id = 'free-wedding-resources-' | append: section.id
+  assign form_id = section.settings.klaviyo_form_id | strip
+  assign image_label_opacity = section.settings.image_label_opacity | divided_by: 100.0
+-%}
+
+<style>
+  #{{ section_id }} {
+    --fwr-background: {{ section.settings.background_color }};
+    --fwr-card: {{ section.settings.card_color }};
+    --fwr-text: {{ section.settings.text_color }};
+    --fwr-heading: {{ section.settings.heading_color }};
+    --fwr-accent: {{ section.settings.accent_color }};
+    --fwr-check-icon: {{ section.settings.check_icon_color }};
+    --fwr-image-label-text: {{ section.settings.image_label_text_color }};
+    --fwr-image-label-background: {{ section.settings.image_label_background_color | color_modify: 'alpha', image_label_opacity }};
+    --fwr-button-text: {{ section.settings.button_text_color }};
+    --fwr-max-width: {{ section.settings.max_width }}px;
+    background: var(--fwr-background);
+    color: var(--fwr-text);
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+
+  #{{ section_id }} * {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .fwr__inner {
+    width: min(calc(100% - 48px), var(--fwr-max-width));
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+    align-items: stretch;
+  }
+
+  #{{ section_id }} .fwr__media {
+    position: relative;
+    min-height: {{ section.settings.desktop_image_height }}px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  #{{ section_id }} .fwr__image,
+  #{{ section_id }} .fwr__placeholder-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #{{ section_id }} .fwr__image {
+    object-position: {{ section.settings.image.presentation.focal_point | default: 'center center' }};
+  }
+
+  #{{ section_id }} .fwr__media-label {
+    position: absolute;
+    left: 24px;
+    bottom: 24px;
+    max-width: calc(100% - 48px);
+    margin: 0;
+    padding: 10px 14px;
+    color: var(--fwr-image-label-text);
+    background: var(--fwr-image-label-background);
+    font-size: 0.7rem;
+    line-height: 1.3;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    backdrop-filter: blur(4px);
+  }
+
+  #{{ section_id }} .fwr__content {
+    display: flex;
+    align-items: center;
+    padding: clamp(42px, 5vw, 82px);
+    background: var(--fwr-card);
+  }
+
+  #{{ section_id }} .fwr__content-inner {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  #{{ section_id }} .fwr__eyebrow {
+    margin: 0 0 18px;
+    color: var(--fwr-accent);
+    font-family: inherit;
+    font-size: 0.72rem;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .fwr__heading {
+    margin: 0;
+    color: var(--fwr-heading);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(2.6rem, 4.5vw, 5.25rem);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+  }
+
+  #{{ section_id }} .fwr__heading em {
+    color: var(--fwr-accent);
+    font-weight: 400;
+  }
+
+  #{{ section_id }} .fwr__text {
+    max-width: 500px;
+    margin-top: 26px;
+    font-size: clamp(1rem, 1.15vw, 1.16rem);
+    line-height: 1.7;
+  }
+
+  #{{ section_id }} .fwr__text > * {
+    margin-top: 0;
+    margin-bottom: 14px;
+  }
+
+  #{{ section_id }} .fwr__text > *:last-child {
+    margin-bottom: 0;
+  }
+
+  #{{ section_id }} .fwr__benefits {
+    display: grid;
+    gap: 9px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #{{ section_id }} .fwr__benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  #{{ section_id }} .fwr__check {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    color: var(--fwr-check-icon);
+  }
+
+  #{{ section_id }} .fwr__form-wrap {
+    margin-top: 32px;
+  }
+
+  #{{ section_id }} .fwr__form-placeholder {
+    padding: 24px;
+    border: 1px dashed var(--fwr-accent);
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  /* These rules gently align the embedded form with the section.
+     Form-specific fonts, fields and button styles remain editable in Klaviyo. */
+  #{{ section_id }} .klaviyo-form {
+    width: 100%;
+  }
+
+  #{{ section_id }} .klaviyo-form button {
+    min-height: 50px !important;
+    border-radius: 0 !important;
+  }
+
+  @media screen and (max-width: 989px) {
+    #{{ section_id }} .fwr__inner {
+      grid-template-columns: 1fr;
+      width: min(calc(100% - 32px), 760px);
+    }
+
+    #{{ section_id }} .fwr__media {
+      min-height: 0;
+      aspect-ratio: 4 / 3;
+    }
+
+    #{{ section_id }} .fwr__content {
+      padding: 48px clamp(24px, 7vw, 56px) 54px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} {
+      padding: {{ section.settings.mobile_padding_top }}px 0 {{ section.settings.mobile_padding_bottom }}px;
+    }
+
+    #{{ section_id }} .fwr__inner {
+      width: calc(100% - 24px);
+    }
+
+    #{{ section_id }} .fwr__media {
+      aspect-ratio: {{ section.settings.mobile_image_ratio }};
+    }
+
+    #{{ section_id }} .fwr__media-label {
+      left: 16px;
+      bottom: 16px;
+      max-width: calc(100% - 32px);
+    }
+
+    #{{ section_id }} .fwr__content {
+      padding: 38px 22px 44px;
+    }
+
+    #{{ section_id }} .fwr__heading {
+      font-size: clamp(2.4rem, 13vw, 4rem);
+    }
+
+    #{{ section_id }} .fwr__text {
+      margin-top: 22px;
+      line-height: 1.62;
+    }
+
+    #{{ section_id }} .fwr__benefits {
+      margin-top: 24px;
+    }
+
+    #{{ section_id }} .fwr__form-wrap {
+      margin-top: 28px;
+    }
+  }
+</style>
+
+<section
+  id="{{ section_id }}"
+  class="fwr"
+  data-section-id="{{ section.id }}"
+  data-section-type="free-wedding-resources"
+>
+  <div class="fwr__inner">
+    <div class="fwr__media">
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 1800
+          | image_tag:
+            class: 'fwr__image',
+            loading: 'eager',
+            fetchpriority: 'high',
+            sizes: '(min-width: 990px) 52vw, (min-width: 750px) calc(100vw - 32px), calc(100vw - 24px)',
+            widths: '375, 550, 750, 950, 1200, 1500, 1800'
+        }}
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'fwr__placeholder-svg' }}
+      {%- endif -%}
+
+      {%- if section.settings.image_label != blank -%}
+        <p class="fwr__media-label">{{ section.settings.image_label | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="fwr__content">
+      <div class="fwr__content-inner">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="fwr__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h1 class="fwr__heading">{{ section.settings.heading }}</h1>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="fwr__text">{{ section.settings.text }}</div>
+        {%- endif -%}
+
+        {%- if section.blocks.size > 0 -%}
+          <ul class="fwr__benefits" role="list">
+            {%- for block in section.blocks -%}
+              <li class="fwr__benefit" {{ block.shopify_attributes }}>
+                <svg class="fwr__check" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                  <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1" />
+                  <path d="m6 10 2.5 2.5L14 7.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>{{ block.settings.text | escape }}</span>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        <div class="fwr__form-wrap">
+          {%- if form_id != blank -%}
+            <div class="klaviyo-form-{{ form_id | escape }}"></div>
+          {%- elsif request.design_mode -%}
+            <div class="fwr__form-placeholder">
+              Add the Klaviyo embed form ID in this section's settings.<br>
+              Example: if the embed code is <strong>klaviyo-form-ABC123</strong>, enter <strong>ABC123</strong>.
+            </div>
+          {%- endif -%}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Free wedding resources",
+  "tag": "section",
+  "class": "section--free-wedding-resources",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "Complimentary wedding resources"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Beautiful ideas for your <em>big day</em>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Unlock our collection of thoughtfully curated wedding guides, created to help you plan a celebration that feels unmistakably yours.</p><p>Enter your details once for instant access to our Vendor Guide, Style Guide, colour inspiration and more.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Klaviyo form"
+    },
+    {
+      "type": "text",
+      "id": "klaviyo_form_id",
+      "label": "Klaviyo embed form ID",
+      "info": "Enter only the ID after klaviyo-form-, for example ABC123. Build the date field and success redirect inside Klaviyo."
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Main image"
+    },
+    {
+      "type": "text",
+      "id": "image_label",
+      "label": "Image label",
+      "default": "Wedding inspiration, thoughtfully gathered"
+    },
+    {
+      "type": "color",
+      "id": "image_label_background_color",
+      "label": "Image label background",
+      "default": "#262d22"
+    },
+    {
+      "type": "color",
+      "id": "image_label_text_color",
+      "label": "Image label text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "image_label_opacity",
+      "label": "Image label background opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 80
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_ratio",
+      "label": "Mobile image shape",
+      "options": [
+        { "value": "4 / 5", "label": "Portrait" },
+        { "value": "1 / 1", "label": "Square" },
+        { "value": "4 / 3", "label": "Landscape" }
+      ],
+      "default": "4 / 5"
+    },
+    {
+      "type": "range",
+      "id": "desktop_image_height",
+      "label": "Desktop image height",
+      "min": 560,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "header",
+      "content": "Colours"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Page background",
+      "default": "#f3eee7"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Content background",
+      "default": "#fbf7f1"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text",
+      "default": "#32352d"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#32352d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#ad6f5d"
+    },
+    {
+      "type": "color",
+      "id": "check_icon_color",
+      "label": "Resource check icons",
+      "default": "#ad6f5d"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Mobile top spacing",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Mobile bottom spacing",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Resource highlight",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Expert guidance from experienced wedding florists"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Free wedding resources",
+      "blocks": [
+        { "type": "benefit", "settings": { "text": "Vendor, styling and colour guidance in one place" } },
+        { "type": "benefit", "settings": { "text": "Created by experienced wedding florists" } },
+        { "type": "benefit", "settings": { "text": "Instant access after signing up" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

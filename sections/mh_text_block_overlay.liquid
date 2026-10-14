@@ -1,0 +1,272 @@
+<style>
+  .text_color_{{ section.id }} * {
+    color: {{ section.settings.text_color }} !important;
+  }
+
+  #shopify-section-{{ section.id }} .mh_text_block_overlay_h1 {
+    background-color: {{ section.settings.background_color }};
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .section_wrapper_h1 {
+    position: relative;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding-top: 40px;
+  }
+
+  #shopify-section-{{ section.id }} .image_h1 {
+    display: block;
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+    height: auto;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .text_block_h1 {
+    position: absolute;
+    top: -28px;
+    left: 10px;
+    width: 48%;
+    max-width: 440px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    padding: 32px 32px 28px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    z-index: 2;
+    transform: rotate(-5deg);
+  }
+
+  #shopify-section-{{ section.id }} .text_h1 {
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .text_h1 * {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .text_h1 h1,
+  #shopify-section-{{ section.id }} .text_h1 h2 {
+    font-size: 40px;
+    line-height: 0.95;
+    margin-bottom: 14px;
+  }
+
+  #shopify-section-{{ section.id }} .text_h1 h3,
+  #shopify-section-{{ section.id }} .text_h1 h4 {
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .text_h1 p {
+    font-size: 14px;
+    line-height: 1.25;
+    margin-top: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .text_h1 p + p {
+    margin-top: 8px;
+  }
+
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .section_wrapper_h1 {
+      max-width: 100%;
+      padding-top: 30px;
+    }
+
+    #shopify-section-{{ section.id }} .image_h1 {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .text_block_h1 {
+      top: -18px;
+      left: 12px;
+      width: 60%;
+      max-width: 380px;
+      padding: 24px 24px 22px;
+      transform: rotate(-4deg);
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 h1,
+    #shopify-section-{{ section.id }} .text_h1 h2 {
+      font-size: 32px;
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 h3,
+    #shopify-section-{{ section.id }} .text_h1 h4 {
+      font-size: 26px;
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 p {
+      font-size: 13px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .section_wrapper_h1 {
+      position: relative;
+      display: block;
+      padding-top: 30px;
+    }
+
+    #shopify-section-{{ section.id }} .image_h1 {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    #shopify-section-{{ section.id }} .text_block_h1 {
+      position: absolute;
+      top: -40px;
+      left: 8px;
+      width: 75%;
+      max-width: 320px;
+      padding: 20px 20px 18px;
+      transform: rotate(-4deg);
+      z-index: 2;
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 h1,
+    #shopify-section-{{ section.id }} .text_h1 h2 {
+      font-size: 26px;
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 h3,
+    #shopify-section-{{ section.id }} .text_h1 h4 {
+      font-size: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 p {
+      font-size: 13px;
+      line-height: 1.35;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    #shopify-section-{{ section.id }} .section_wrapper_h1 {
+      padding-top: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .text_block_h1 {
+      top: -48px;
+      left: 6px;
+      width: 78%;
+      max-width: 300px;
+      padding: 18px 18px 16px;
+      transform: rotate(-4deg);
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 h1,
+    #shopify-section-{{ section.id }} .text_h1 h2 {
+      font-size: 23px;
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 h3,
+    #shopify-section-{{ section.id }} .text_h1 h4 {
+      font-size: 19px;
+    }
+
+    #shopify-section-{{ section.id }} .text_h1 p {
+      font-size: 12px;
+      line-height: 1.3;
+    }
+  }
+</style>
+
+<section class="mh_text_block_overlay_h1"
+  style="padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  background-color: {{ section.settings.background_color }};">
+  <div class="page-width">
+    <div class="max_width_dd section_wrapper_h1">
+      {% if section.settings.image != blank %}
+        <img class="image_dd image_h1"
+          src="{{ section.settings.image | image_url: width: 2000 }}"
+          alt="{{ section.settings.image.alt | escape }}"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          loading="lazy">
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="text_block_h1 background_image_dd"
+          style="background-image: url('{{ section.settings.text_background_image | image_url: width: 1000 }}');">
+          <div class="text_dd text_h1 text_color_{{ section.id }}">
+            {{ section.settings.text }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "TIC Text Block Overlay",
+  "presets": [
+    {
+      "name": "TIC Text Block Overlay"
+    }
+  ],
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f7f5e2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "image"
+    },
+    {
+      "type": "header",
+      "content": "__ Overlay Block __"
+    },
+    {
+      "type": "image_picker",
+      "id": "text_background_image",
+      "label": "Text Background Image"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 40
+    }
+  ]
+}
+{% endschema %}

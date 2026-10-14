@@ -1,0 +1,112 @@
+<!-- snippets/localization.liquid -->
+
+{%- doc -%}
+  Renders the language and region selectors.
+  @param {string} id - Base id used for form controls.
+  @param {string} [direction] - Direction of the form.
+  @param {boolean} [locale_enabled] - Show locale selector.
+  @param {boolean} [region_enabled] - Show region selector.
+{%- enddoc -%}
+
+{%- liquid
+  assign locale_label_t = 'general.localization.language' | t
+  assign region_label_t = 'general.localization.region' | t
+
+  assign form_id = id | append: '_localization'
+  assign locale_id = id | append: '_locale'
+  assign region_id = id | append: '_region'
+
+  form 'localization', id: form_id, class: 'localization--form', data-direction: direction
+    if locale_enabled
+      for locale in localization.available_languages
+        capture locale_values
+          echo locale_values
+          echo locale.iso_code | append: ','
+        endcapture
+
+        capture locale_names
+          echo locale_names
+          echo locale.endonym_name | append: ','
+        endcapture
+      endfor
+
+      assign locale_values = locale_values | split: ','
+      assign locale_names = locale_names | split: ','
+
+      render 'disclosure', label_name: localization.language.endonym_name, option_names: locale_names, option_values: locale_values, current_value: localization.language.iso_code, id: locale_id, input_name: 'locale_code', type: 'localization'
+    endif
+
+    if region_enabled
+      for country in localization.available_countries
+        assign loading = 'lazy'
+        if localization.country.name == country.name
+          assign loading = 'eager'
+        endif
+
+        capture flag
+          echo country | image_url: width: 26 | image_tag: class: 'icon--flag', loading: loading
+        endcapture
+
+        capture region_values
+          echo region_values
+          echo country.iso_code | append: ','
+        endcapture
+
+        capture region_names
+          echo region_names
+          echo '<span class="disclosure-option--wrapper" data-country="' | append: country.name | append: '">'
+          echo flag | append: '</span><p>'
+          echo country.currency.iso_code | append: ' ' | append: country.currency.symbol | append: '</p>,'
+        endcapture
+      endfor
+
+      assign region_values = region_values | split: ','
+      assign region_names = region_names | split: ','
+
+      render 'disclosure', label_name: region_label_t, option_names: region_names, option_values: region_values, current_value: localization.country.iso_code, id: region_id, input_name: 'country_code', type: 'localization'
+    endif
+  endform
+-%}
+
+{% stylesheet %}
+  .localization--form {
+    display: inline-flex;
+    row-gap: var(--spacing--item);
+    column-gap: var(--spacing--block);
+    flex-wrap: wrap;
+
+    &[data-direction='vertical'] {
+      flex-direction: column;
+    }
+
+    &[data-direction='horizontal'] {
+      flex-direction: row;
+    }
+
+    .disclosure--toggle {
+      padding: 0;
+      color: var(--color);
+    }
+
+    .disclosure--current-option p {
+      display: none;
+    }
+
+    .disclosure--form {
+      width: max-content;
+
+      .disclosure-option--wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing--1);
+        white-space: break-spaces;
+        pointer-events: none;
+
+        &:after {
+          content: attr(data-country);
+          display: inline-block;
+        }
+      }
+    }
+  }
+{% endstylesheet %}

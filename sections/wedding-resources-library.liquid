@@ -1,0 +1,711 @@
+{%- liquid
+  assign section_id = 'wedding-resource-library-' | append: section.id
+-%}
+
+<style>
+  #{{ section_id }} {
+    --wrl-background: {{ section.settings.background_color }};
+    --wrl-card: {{ section.settings.card_color }};
+    --wrl-heading: {{ section.settings.heading_color }};
+    --wrl-text: {{ section.settings.text_color }};
+    --wrl-accent: {{ section.settings.accent_color }};
+    --wrl-button: {{ section.settings.button_color }};
+    --wrl-button-text: {{ section.settings.button_text_color }};
+    --wrl-border: {{ section.settings.border_color }};
+    --wrl-max-width: {{ section.settings.max_width }}px;
+    background: var(--wrl-background);
+    color: var(--wrl-text);
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+
+  #{{ section_id }} * {
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .wrl__inner {
+    width: min(calc(100% - 48px), var(--wrl-max-width));
+    margin: 0 auto;
+  }
+
+  #{{ section_id }} .wrl__header {
+    max-width: 820px;
+    margin: 0 auto clamp(44px, 6vw, 78px);
+    text-align: {{ section.settings.header_alignment }};
+  }
+
+  #{{ section_id }} .wrl__eyebrow {
+    margin: 0 0 18px;
+    color: var(--wrl-accent);
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .wrl__heading {
+    margin: 0;
+    color: var(--wrl-heading);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(2.8rem, 6vw, 6.25rem);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+  }
+
+  #{{ section_id }} .wrl__heading em {
+    color: var(--wrl-accent);
+    font-weight: 400;
+  }
+
+  #{{ section_id }} .wrl__intro {
+    max-width: 680px;
+    margin: 26px auto 0;
+    color: var(--wrl-text);
+    font-size: clamp(1rem, 1.2vw, 1.18rem);
+    line-height: 1.7;
+  }
+
+  #{{ section_id }} .wrl__intro > * {
+    margin-top: 0;
+    margin-bottom: 14px;
+  }
+
+  #{{ section_id }} .wrl__intro > *:last-child {
+    margin-bottom: 0;
+  }
+
+  #{{ section_id }} .wrl__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, 1fr));
+    gap: {{ section.settings.grid_gap }}px;
+    align-items: stretch;
+  }
+
+  #{{ section_id }} .wrl__card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--wrl-border);
+    border-radius: {{ section.settings.card_radius }}px;
+    background: var(--wrl-card);
+  }
+
+  #{{ section_id }} .wrl__media-link {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: {{ section.settings.image_ratio }};
+    background: color-mix(in srgb, var(--wrl-accent) 14%, var(--wrl-card));
+  }
+
+  #{{ section_id }} .wrl__image,
+  #{{ section_id }} .wrl__placeholder-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 350ms ease;
+  }
+
+  #{{ section_id }} .wrl__media-link:hover .wrl__image {
+    transform: scale(1.025);
+  }
+
+  #{{ section_id }} .wrl__type-label {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    margin: 0;
+    padding: 8px 11px;
+    color: var(--wrl-button-text);
+    background: var(--wrl-button);
+    font-size: 0.66rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .wrl__card-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: clamp(24px, 3vw, 36px);
+  }
+
+  #{{ section_id }} .wrl__card-kicker {
+    margin: 0 0 11px;
+    color: var(--wrl-accent);
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #{{ section_id }} .wrl__card-title {
+    margin: 0;
+    color: var(--wrl-heading);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.65rem, 2.2vw, 2.35rem);
+    font-weight: 400;
+    line-height: 1.08;
+  }
+
+  #{{ section_id }} .wrl__card-text {
+    margin-top: 18px;
+    color: var(--wrl-text);
+    font-size: 0.96rem;
+    line-height: 1.65;
+  }
+
+  #{{ section_id }} .wrl__card-text > * {
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  #{{ section_id }} .wrl__card-text > *:last-child {
+    margin-bottom: 0;
+  }
+
+  #{{ section_id }} .wrl__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 50px;
+    margin-top: auto;
+    padding: 14px 22px;
+    border: 1px solid var(--wrl-button);
+    border-radius: {{ section.settings.button_radius }}px;
+    color: var(--wrl-button-text);
+    background: var(--wrl-button);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 180ms ease, background-color 180ms ease;
+  }
+
+  #{{ section_id }} .wrl__card-text + .wrl__button,
+  #{{ section_id }} .wrl__card-title + .wrl__button {
+    margin-top: 26px;
+  }
+
+  #{{ section_id }} .wrl__button:hover {
+    color: var(--wrl-button);
+    background: transparent;
+  }
+
+  #{{ section_id }} .wrl__button-icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+  }
+
+  #{{ section_id }} .wrl__empty {
+    grid-column: 1 / -1;
+    padding: 48px 24px;
+    border: 1px dashed var(--wrl-border);
+    text-align: center;
+  }
+
+  #{{ section_id }} .wrl__footer {
+    max-width: 720px;
+    margin: clamp(40px, 6vw, 72px) auto 0;
+    color: var(--wrl-text);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    text-align: center;
+  }
+
+  #{{ section_id }} .wrl__footer a {
+    color: var(--wrl-accent);
+    text-underline-offset: 3px;
+  }
+
+  @media screen and (max-width: 989px) {
+    #{{ section_id }} .wrl__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} {
+      padding: {{ section.settings.mobile_padding_top }}px 0 {{ section.settings.mobile_padding_bottom }}px;
+    }
+
+    #{{ section_id }} .wrl__inner {
+      width: calc(100% - 32px);
+    }
+
+    #{{ section_id }} .wrl__header {
+      margin-bottom: 38px;
+      text-align: {{ section.settings.mobile_header_alignment }};
+    }
+
+    #{{ section_id }} .wrl__heading {
+      font-size: clamp(2.55rem, 14vw, 4.3rem);
+    }
+
+    #{{ section_id }} .wrl__intro {
+      margin-top: 22px;
+      line-height: 1.62;
+    }
+
+    #{{ section_id }} .wrl__grid {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.mobile_grid_gap }}px;
+    }
+
+    #{{ section_id }} .wrl__card-content {
+      padding: 26px 22px 28px;
+    }
+
+    #{{ section_id }} .wrl__button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .wrl__image,
+    #{{ section_id }} .wrl__button {
+      transition: none;
+    }
+  }
+</style>
+
+<section
+  id="{{ section_id }}"
+  class="wrl"
+  data-section-id="{{ section.id }}"
+  data-section-type="wedding-resource-library"
+>
+  <div class="wrl__inner">
+    <header class="wrl__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="wrl__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h1 class="wrl__heading">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.intro != blank -%}
+        <div class="wrl__intro">{{ section.settings.intro }}</div>
+      {%- endif -%}
+    </header>
+
+    <div class="wrl__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign resource_url = block.settings.resource_url
+          assign link_target = '_self'
+          assign link_rel = ''
+          if block.settings.open_new_tab
+            assign link_target = '_blank'
+            assign link_rel = 'noopener noreferrer'
+          endif
+        -%}
+
+        <article class="wrl__card" {{ block.shopify_attributes }}>
+          {%- if resource_url != blank -%}
+            <a
+              class="wrl__media-link"
+              href="{{ resource_url }}"
+              target="{{ link_target }}"
+              {%- if link_rel != blank %} rel="{{ link_rel }}"{% endif -%}
+              aria-label="{{ block.settings.button_label | default: 'View resource' | escape }}: {{ block.settings.title | escape }}"
+            >
+          {%- else -%}
+            <div class="wrl__media-link">
+          {%- endif -%}
+
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 1200
+                | image_tag:
+                  class: 'wrl__image',
+                  loading: 'lazy',
+                  sizes: '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw',
+                  widths: '375, 550, 750, 950, 1200'
+              }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'wrl__placeholder-svg' }}
+            {%- endif -%}
+
+            {%- if block.settings.file_type != blank -%}
+              <span class="wrl__type-label">{{ block.settings.file_type | escape }}</span>
+            {%- endif -%}
+
+          {%- if resource_url != blank -%}
+            </a>
+          {%- else -%}
+            </div>
+          {%- endif -%}
+
+          <div class="wrl__card-content">
+            {%- if block.settings.kicker != blank -%}
+              <p class="wrl__card-kicker">{{ block.settings.kicker | escape }}</p>
+            {%- endif -%}
+
+            {%- if block.settings.title != blank -%}
+              <h2 class="wrl__card-title">{{ block.settings.title | escape }}</h2>
+            {%- endif -%}
+
+            {%- if block.settings.description != blank -%}
+              <div class="wrl__card-text">{{ block.settings.description }}</div>
+            {%- endif -%}
+
+            {%- if block.settings.button_label != blank and resource_url != blank -%}
+              <a
+                class="wrl__button"
+                href="{{ resource_url }}"
+                target="{{ link_target }}"
+                {%- if link_rel != blank %} rel="{{ link_rel }}"{% endif -%}
+              >
+                <span>{{ block.settings.button_label | escape }}</span>
+                <svg class="wrl__button-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                  <path d="M10 2v10m0 0 4-4m-4 4L6 8M3 14v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            {%- endif -%}
+          </div>
+        </article>
+      {%- else -%}
+        {%- if request.design_mode -%}
+          <div class="wrl__empty">
+            Add a resource block for each PDF you want visitors to access.
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.footer_text != blank -%}
+      <div class="wrl__footer">{{ section.settings.footer_text }}</div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Wedding resource library",
+  "tag": "section",
+  "class": "section--wedding-resource-library",
+  "max_blocks": 24,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "The Green Room Flower Co."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Your Wedding <em>Resource Library</em>"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Introduction",
+      "default": "<p>Welcome - your complimentary wedding resources are ready. Choose any guide below to view or download, and return whenever you need a little inspiration.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "footer_text",
+      "label": "Text below resources",
+      "default": "<p>Planning your wedding flowers? <a href=\"/pages/contact\">We would love to hear about your day.</a></p>"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Desktop text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Centre" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_header_alignment",
+      "label": "Mobile text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Centre" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Brand colours"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Page background",
+      "default": "#fffff3"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Resource card background",
+      "default": "#fffff3"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings",
+      "default": "#264a3d"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text",
+      "default": "#264a3d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#d37f91"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Buttons and PDF labels",
+      "default": "#d37f91"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#fffff3"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Card borders",
+      "default": "#f8b3bf"
+    },
+    {
+      "type": "header",
+      "content": "Resource grid"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "options": [
+        { "value": "2", "label": "Two" },
+        { "value": "3", "label": "Three" },
+        { "value": "4", "label": "Four" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Cover image shape",
+      "options": [
+        { "value": "4 / 5", "label": "Portrait" },
+        { "value": "3 / 4", "label": "Tall portrait" },
+        { "value": "1 / 1", "label": "Square" },
+        { "value": "4 / 3", "label": "Landscape" }
+      ],
+      "default": "4 / 5"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Desktop space between cards",
+      "min": 12,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "mobile_grid_gap",
+      "label": "Mobile space between cards",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Button corner radius",
+      "min": 0,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1350
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Mobile top spacing",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Mobile bottom spacing",
+      "min": 0,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "resource",
+      "name": "PDF resource",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Cover image"
+        },
+        {
+          "type": "text",
+          "id": "file_type",
+          "label": "File type label",
+          "default": "PDF"
+        },
+        {
+          "type": "text",
+          "id": "kicker",
+          "label": "Small heading",
+          "default": "Complimentary guide"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Resource title",
+          "default": "Wedding Style Guide"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Discover floral styles, thoughtful details and inspiration to help shape the look and feeling of your celebration.</p>"
+        },
+        {
+          "type": "url",
+          "id": "resource_url",
+          "label": "PDF link",
+          "info": "Upload the PDF under Content > Files, copy its URL, then paste or select it here."
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Download guide"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_new_tab",
+          "label": "Open PDF in a new tab",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wedding resource library",
+      "blocks": [
+        {
+          "type": "resource",
+          "settings": {
+            "title": "Vendor Guide",
+            "description": "<p>Our curated recommendations for talented wedding professionals who can help bring your celebration together.</p>"
+          }
+        },
+        {
+          "type": "resource",
+          "settings": {
+            "title": "Wedding Style Guide",
+            "description": "<p>Floral styles, thoughtful details and inspiration to help shape the look and feeling of your wedding.</p>"
+          }
+        },
+        {
+          "type": "resource",
+          "settings": {
+            "title": "Colour Palette Guide",
+            "description": "<p>Explore considered colour combinations designed to inspire a cohesive and beautifully personal celebration.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

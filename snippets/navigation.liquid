@@ -1,0 +1,413 @@
+<!-- snippets/navigation.liquid -->
+
+{%- doc -%}
+  Renders the collection/search navigation bar with filter controls.
+  @param {string} ajax_url - URL for filter requests.
+  @param {section} section - Section context.
+  @param {string} storage_name - Key used to persist state.
+  @param {string[]} [mobile_buttons] - Mobile button types to display.
+  @param {string} [mobile_spacing_above] - Mobile spacing above.
+  @param {string} [mobile_spacing_below] - Mobile spacing below.
+  @param {string} [results_string] - Human-readable results summary.
+  @param {boolean} [show_browse_button] - Show browse trigger.
+  @param {boolean} [show_layout_buttons] - Show layout toggles.
+  @param {boolean} [show_refine_button] - Show refine trigger.
+  @param {boolean} [show_refine_list] - Indicates filters are present.
+  @param {boolean} [show_sort_button] - Show sort trigger.
+  @param {boolean} [show_sort_list] - Indicates sort options are present.
+  @param {string} [spacing_above] - Desktop spacing above.
+  @param {string} [spacing_below] - Desktop spacing below.
+  @param {string} [swatches] - Swatch shape token.
+{%- enddoc -%}
+
+{%- liquid
+  assign browse_t = 'sections.navigation.browse' | t
+  assign clear_all_t = 'sections.navigation.clear_all' | t
+  assign large_layout_t = 'sections.navigation.large_layout' | t
+  assign refine_t = 'sections.navigation.refine' | t
+  assign small_layout_t = 'sections.navigation.small_layout' | t
+  assign sort_by_t = 'sections.navigation.sort_by' | t
+
+  assign show_filter = false
+  if show_browse_button or show_refine_button or show_sort_button
+    assign show_filter = true
+  endif
+-%}
+
+<navigation-element
+  class="navigation--root"
+  data-section-id="{{ section.id }}"
+  data-background-color="none"
+  data-container-width="5"
+  data-mobile-spacing-above="{{ mobile_spacing_above }}"
+  data-mobile-spacing-below="{{ mobile_spacing_below }}"
+  data-spacing-above="{{ spacing_above }}"
+  data-spacing-below="{{ spacing_below }}"
+  data-show-navigation="{% if show_filter or show_layout_buttons %}true{% else %}false{% endif %}"
+  data-storage-name="{{ storage_name }}"
+  data-url="{{ ajax_url }}"
+>
+  <div class="navigation--wrapper">
+    {%- if show_filter or show_layout_buttons -%}
+      <div class="navigation--container" data-mq="medium-large">
+
+        {%- if show_filter -%}
+          <div class="navigation--filter">
+            {%- if show_browse_button -%}
+              <button
+                class="navigation--button"
+                tabindex="0"
+                data-item="nav-text"
+                data-drawer-open="right"
+                data-drawer-view="filter"
+                data-toggle-menu="browse_filter"
+                aria-haspopup="menu"
+              >
+                {{ browse_t }}
+              </button>
+            {%- endif -%}
+            {%- if show_sort_button -%}
+              <button
+                class="navigation--button"
+                tabindex="0"
+                data-item="nav-text"
+                data-drawer-open="right"
+                data-drawer-view="filter"
+                data-toggle-menu="sort_filter"
+                aria-haspopup="menu"
+              >
+                {{ sort_by_t }}
+              </button>
+            {%- endif -%}
+            {%- if show_refine_button -%}
+              <button
+                class="navigation--button"
+                tabindex="0"
+                data-item="nav-text"
+                data-drawer-open="right"
+                data-drawer-view="filter"
+                data-toggle-menu="refine_filter"
+                aria-haspopup="menu"
+              >
+                {{- refine_t -}}
+              </button>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if results_string -%}
+          <div class="navigation--results" data-item="caption">
+            {{- results_string -}}
+          </div>
+        {%- endif -%}
+
+        {%- if show_layout_buttons -%}
+          <div class="navigation--layout">
+            <button
+              class="navigation--layout-button"
+              tabindex="0"
+              data-active="false"
+              data-column-size="2"
+              role="button"
+              aria-label="{{ large_layout_t }}"
+            >
+              {%- render 'icons', icon: 'grid-large' -%}
+            </button>
+            <button
+              class="navigation--layout-button"
+              tabindex="0"
+              data-active="false"
+              data-column-size
+              role="button"
+              aria-label="{{ small_layout_t }}"
+            >
+              {%- render 'icons', icon: 'grid-small' -%}
+            </button>
+          </div>
+        {%- endif -%}
+
+      </div>
+    {%- endif -%}
+
+    <div
+      class="navigation--mobile-header"
+      data-container="block"
+      data-text-color="body"
+      data-mq="small"
+    >
+      {%- if show_browse_button and mobile_buttons contains 'browse' -%}
+        <button
+          class="navigation--mobile-button"
+          tabindex="0"
+          data-item="nav-text"
+          data-drawer-open="right"
+          data-drawer-view="filter"
+          data-toggle-menu="browse_filter"
+          aria-haspopup="menu"
+        >
+          {{- browse_t -}}
+        </button>
+      {%- endif -%}
+      {%- if show_sort_button and mobile_buttons contains 'sort' -%}
+        <button
+          class="navigation--mobile-button"
+          tabindex="0"
+          data-item="nav-text"
+          data-drawer-open="right"
+          data-drawer-view="filter"
+          data-toggle-menu="sort_filter"
+          aria-haspopup="menu"
+        >
+          {{- sort_by_t -}}
+        </button>
+      {%- endif -%}
+      {%- if show_refine_button and mobile_buttons contains 'refine' -%}
+        <button
+          class="navigation--mobile-button"
+          tabindex="0"
+          data-item="nav-text"
+          data-drawer-open="right"
+          data-drawer-view="filter"
+          data-toggle-menu="refine_filter"
+          aria-haspopup="menu"
+        >
+          {{- refine_t -}}
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- if show_sort_list or show_refine_list -%}
+      {%- comment -%} this is used to render active tags above the product grid {%- endcomment -%}
+      <div
+        class="navigation--tags-container"
+        data-container="block"
+        style="display:none;"
+      >
+        <ul class="navigation--active-tags" data-item="sub-nav-text">
+          {%- if show_sort_list -%}
+            <li
+              class="navigation--active-tag"
+              data-type="sort"
+              tabindex="0"
+              data-item="tag"
+              style="display:none;"
+            >
+              {{ sort_by_t }}:&nbsp;<span></span>
+              {%- render 'icons', icon: 'cross' -%}
+            </li>
+          {%- endif -%}
+          {%- if show_refine_list -%}
+            <li
+              class="navigation--active-tag"
+              data-type="refine"
+              tabindex="0"
+              data-item="tag"
+              style="display:none;"
+            >
+              {%- unless swatches == 'none' -%}
+                <div class="navigation--active-tag--swatch" data-shape="{{ swatches }}"></div>
+              {%- endunless -%}
+
+              <span></span>
+              {%- render 'icons', icon: 'cross' -%}
+            </li>
+            <li
+              class="navigation--active-tag"
+              data-type="price"
+              tabindex="0"
+              data-item="tag"
+              style="display:none;"
+            >
+              {{- cart.currency.symbol -}}
+              <span data-min-price></span>&nbsp;-&nbsp;
+              {{- cart.currency.symbol -}}
+              <span data-max-price></span>
+              {%- render 'icons', icon: 'cross' -%}
+            </li>
+          {%- endif -%}
+          <li class="navigation--active-clear" tabindex="0" data-item="block-link">
+            <span>{{ clear_all_t }}</span>
+          </li>
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+</navigation-element>
+
+{% stylesheet %}
+  .navigation--container {
+    @media (min-width: 768px) {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  .navigation--layout {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .navigation--layout-button {
+    color: var(--color--body);
+    transition: 0.25s color ease-in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border: var(--border--dark);
+
+    &:first-child {
+      border-right: 0;
+      padding-right: 0;
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      border-left: 0;
+      padding-left: 0;
+    }
+
+    &[aria-pressed='false']:not(:hover) svg {
+      opacity: 0.3;
+    }
+
+    &[aria-hidden='true'] {
+      display: none;
+    }
+
+    &:active svg {
+      scale: 0.95;
+      opacity: 0.8;
+    }
+
+    > * {
+      pointer-events: none;
+    }
+  }
+
+  .navigation--filter {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    flex-basis: initial;
+    padding: 0 3px;
+    border-radius: 20px;
+    border: var(--border--dark);
+  }
+
+  .navigation--button {
+    color: var(--color--body);
+    transition: transform 0.1s var(--transition--standard);
+    padding: 0 var(--spacing--2);
+    border-radius: var(--spacing--item);
+
+    &:active {
+      scale: 0.95;
+      opacity: 0.8;
+    }
+  }
+
+  .navigation--results {
+    display: flex;
+    align-items: center;
+    padding-left: var(--spacing--item);
+  }
+
+  .navigation--tags-container {
+    padding-top: var(--spacing--item);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .navigation--active-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .navigation--active-tag:not(:last-child) {
+    margin: 3px 8px 3px 0;
+    overflow: hidden;
+
+    @media (max-width: 767px) {
+      margin: var(--spacing--0) var(--spacing--2) var(--spacing--0) 0;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: var(--color--gray);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .icon--root {
+      display: block;
+    }
+
+    > * {
+      pointer-events: none;
+    }
+  }
+
+  .navigation--active-tag--swatch {
+    margin: 0 var(--spacing--0) 0 var(--spacing--neg-0);
+    background: content-box var(--swatch-background) no-repeat center / cover;
+
+    &[data-shape='square'] {
+      height: 14px;
+      width: 14px;
+      min-width: 14px;
+    }
+
+    &[data-shape='circle'] {
+      height: 16px;
+      width: 16px;
+      min-width: 16px;
+      border-radius: 50%;
+    }
+  }
+
+  .navigation--active-clear[data-item] {
+    flex-basis: initial;
+    padding: 0 0 var(--spacing--0) var(--spacing--1);
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .navigation--mobile-header[data-container] {
+    flex-wrap: unset;
+
+    &:empty {
+      display: none;
+    }
+
+    @media (max-width: 767px) {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+    }
+  }
+
+  .navigation--mobile-button {
+    height: var(--spacing--block);
+    line-height: 14px;
+    flex-basis: initial;
+    padding: var(--spacing--1) var(--spacing--item);
+    border: var(--border--dark);
+    border-radius: var(--spacing--item);
+
+    &:active {
+      scale: 0.95;
+      opacity: 0.8;
+    }
+  }
+{% endstylesheet %}

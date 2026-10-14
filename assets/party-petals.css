@@ -1,0 +1,23 @@
+/* =========================================================
+   SHARED — used by every Party Petals section (wrapper/base)
+   ========================================================= */
+.pp-wrap {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+.pp-container { width: 100%; max-width: 100%; }
+.pp-inner { background: #FFFFF3; }
+
+/* =========================================================
+   SHARED (used by both party-petals-how-it-works.liquid and
+   party-petals-gallery.liquid) — eyebrow labels, section
+   titles, prev/next arrow buttons, and the horizontal
+   scroll track + its dots pagination
+   ========================================================= */
+
+
+
+
+

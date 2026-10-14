@@ -1,0 +1,178 @@
+<!-- snippets/image-block.liquid -->
+
+{%- doc -%}
+  Renders an image block with optional media and stacked text.
+  @param {block} block - Block settings for media and text.
+  @param {string} [fetchpriority] - Fetch priority.
+  @param {boolean} [full_width] - Full-width media on desktop.
+  @param {string} [heading_type] - Heading tag override.
+  @param {string} [id] - Forwarded id for stacked text.
+  @param {string} [image_aspect_ratio] - Desktop aspect ratio.
+  @param {string} [image_display_type] - Desktop display mode.
+  @param {boolean} [image_transition_disabled] - Disable image transitions.
+  @param {string} [loading] - Loading attribute.
+  @param {boolean} [mobile_full_width] - Full-width media on mobile.
+  @param {string} [mobile_image_aspect_ratio] - Mobile aspect ratio.
+  @param {string} [mobile_image_display_type] - Mobile display mode.
+  @param {string} [mobile_text_color] - Mobile text color override.
+  @param {string} [overlay_style] - Media overlay style.
+  @param {boolean} [parallax_enabled] - Enable parallax.
+  @param {number} [placeholder_index] - Placeholder image index.
+  @param {string} [sizes] - Image `sizes` attribute.
+  @param {string} [text_bg_color] - Text background color.
+  @param {string} [text_color] - Text color.
+  @param {string} [text_style] - Stacked text style token.
+{%- enddoc -%}
+
+{%- liquid
+  assign button_link_1 = block.settings.button-link-1
+  assign button_link_2 = block.settings.button-link-2
+  assign button_style_1 = block.settings.button-style-1
+  assign button_style_2 = block.settings.button-style-2
+  assign button_text_1 = block.settings.button-text-1
+  assign button_text_2 = block.settings.button-text-2
+  assign description = block.settings.description
+  assign heading_type = heading_type | default: block.settings.heading-type
+  assign highlight_color = block.settings.highlight-color
+  assign highlight_text = block.settings.highlight-text
+  assign highlight_type = block.settings.highlight-type
+  assign image = block.settings.image
+  assign mobile_hide_description = block.settings.mobile-hide-description
+  assign mobile_image = block.settings.mobile-image
+  assign mobile_text_x_alignment = block.settings.mobile-text-horizontal-alignment
+  assign mobile_text_y_alignment = block.settings.mobile-text-vertical-alignment
+  assign overlay_style = overlay_style | default: block.settings.overlay-style
+  assign overline = block.settings.overline
+  assign text_bg_color = text_bg_color | default: block.settings.text-background-color
+  assign text_color = text_color | default: block.settings.text-color
+  assign text_width = block.settings.text-width
+  assign text_x_alignment = block.settings.text-horizontal-alignment
+  assign text_y_alignment = block.settings.text-vertical-alignment
+  assign title = block.settings.title
+-%}
+
+<div
+  class="image-block--root"
+  data-full-width="{{ full_width }}"
+  data-mobile-full-width="{{ mobile_full_width }}"
+>
+  <div
+    class="image-block--image"
+    {% unless settings.transitions--image or image_transition_disabled %}
+      data-transition-item="viewport"
+      data-transition-type="image"
+    {% endunless %}
+  >
+    {%- if image -%}
+      {%-
+        render 'image',
+        image: image,
+        aspect_ratio: image_aspect_ratio,
+        display_type: image_display_type,
+        fetchpriority: fetchpriority,
+        full_width: full_width,
+        loading: loading,
+        mobile_aspect_ratio: mobile_image_aspect_ratio,
+        mobile_display_type: mobile_image_display_type,
+        mobile_full_width: mobile_full_width,
+        mobile_image: mobile_image,
+        mobile_overlay_style: overlay_style,
+        overlay_style: overlay_style,
+        parallax: parallax_enabled,
+        sizes: sizes
+      -%}
+    {%- else -%}
+      {%- assign placeholder_index = placeholder_index | default: 2 -%}
+
+      {%-
+        render 'placeholder',
+        type: 'lifestyle',
+        aspect_ratio: image_aspect_ratio,
+        display_type: image_display_type,
+        full_width: full_width,
+        mobile_aspect_ratio: mobile_image_aspect_ratio,
+        mobile_display_type: mobile_image_display_type,
+        mobile_full_width: mobile_full_width,
+        mobile_overlay_style: overlay_style,
+        overlay_text_color: text_color,
+        overlay_style: overlay_style,
+        parallax: parallax_enabled,
+        placeholder_index: placeholder_index
+      -%}
+    {%- endif -%}
+  </div>
+
+  {%-
+    render 'stacked-text',
+    bg_color: text_bg_color,
+    button_link_1: button_link_1,
+    button_link_2: button_link_2,
+    button_style_1: button_style_1,
+    button_style_2: button_style_2,
+    button_text_1: button_text_1,
+    button_text_2: button_text_2,
+    color: text_color,
+    description: description,
+    description_type: 'featured-paragraph',
+    heading_type: heading_type,
+    highlight_color: highlight_color,
+    highlight_text: highlight_text,
+    highlight_type: highlight_type,
+    id: id,
+    mobile_color: mobile_text_color,
+    mobile_hide_description: mobile_hide_description,
+    mobile_x_alignment: mobile_text_x_alignment,
+    mobile_y_alignment: mobile_text_y_alignment,
+    overline: overline,
+    style: text_style,
+    title: title,
+    width: text_width,
+    x_alignment: text_x_alignment,
+    y_alignment: text_y_alignment
+  -%}
+</div>
+
+{% stylesheet %}
+  .image-block--root {
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    display: grid;
+
+    @media (max-width: 767px) {
+      padding: 0;
+
+      .image-block--root[data-mobile-full-width='false'] & {
+        border-radius: var(--image--radius);
+      }
+    }
+
+    @media (max-width: 767px) {
+      padding: 0;
+
+      .image-block--root[data-mobile-full-width='false'] & {
+        border-radius: var(--image--radius);
+      }
+    }
+
+    @media (min-width: 768px) {
+      height: 100%;
+
+      .image-block--root:not([data-full-width='true']) & {
+        border-radius: var(--image--radius);
+      }
+    }
+
+    .stacked-text--root {
+      position: absolute;
+    }
+  }
+
+  .image-block--image {
+    display: block;
+    order: 1;
+    width: 100%;
+    overflow: hidden;
+  }
+{% endstylesheet %}

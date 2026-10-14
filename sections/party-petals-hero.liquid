@@ -1,0 +1,224 @@
+{{ 'party-petals.css' | asset_url | stylesheet_tag }}
+
+<section 
+  class="pp-wrap"
+  style="background-color: {{ section.settings.background_color }};"
+> 
+  <div class="no-container"> 
+    <div class="pp-inner"> 
+      <div 
+        class="pp-hero"
+        id="pp-hero-{{ section.id }}"
+        style="
+          background-image: linear-gradient({{ section.settings.overlay_color_top }}, {{ section.settings.overlay_color_bottom }}), 
+          url('{{ section.settings.hero_image | image_url: width: 1600 }}');
+          --pp-title-color: {{ section.settings.title_color }};
+          --pp-subheading-color: {{ section.settings.subheading_color }};
+          --pp-title-font-size: {{ section.settings.title_font_size }}px;
+          --pp-title-font-size-mobile: {{ section.settings.title_font_size_mobile }}px;
+          --pp-subheading-font-size: {{ section.settings.subheading_font_size }}px;
+          --pp-hero-height: {{ section.settings.hero_height }}px;
+          --pp-hero-height-mobile: {{ section.settings.hero_height_mobile }}px;
+        "
+      > 
+        <h1 class="pp-hero-title">
+          {{ section.settings.heading | default: 'Party Petals' }}
+        </h1> 
+
+        <p class="pp-hero-sub">
+          {{ section.settings.subheading | default: "Florals for your event, created just for you" }}
+        </p> 
+      </div> 
+    </div> 
+  </div> 
+</section> 
+
+<style>
+    
+/* =========================================================
+   SECTION: party-petals-hero.liquid
+   ========================================================= */
+  .no-container {
+    width: 100%;
+  }
+.pp-hero {
+  position: relative;
+  height: var(--pp-hero-height, 420px);
+  background-color: #F2F0E2;
+  background-size: cover;
+  background-position: center 58%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.pp-hero-title {
+    margin: 0 0 45px 0;
+    font-family: Poppins,sans-serif;
+    font-weight: 700;
+    font-size: var(--pp-title-font-size, 72px);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--pp-title-color, #fffff3);
+    text-shadow: 0 2px 24px rgba(38,74,61,.35);
+    text-align: center;
+}
+.pp-hero-sub {
+  margin: 0;
+  font-size: var(--pp-subheading-font-size, 17px);
+  font-style: italic;
+  color: var(--pp-subheading-color, #FFFFF3);
+  text-shadow: 0 1px 16px rgba(38, 74, 61, 0.4);
+  text-align: center;
+}
+
+@media (max-width: 749px) {
+    .pp-hero { height: var(--pp-hero-height-mobile, 320px); }
+    .pp-hero-title { margin: 0 0 10px 0;font-size: var(--pp-title-font-size-mobile, 40px); }
+}
+</style>
+ 
+{% schema %} 
+{ 
+  "name": "Party Petals — Hero", 
+  "settings": [ 
+    { 
+      "type": "image_picker", 
+      "id": "hero_image", 
+      "label": "Hero image" 
+    },
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    { 
+      "type": "color", 
+      "id": "background_color", 
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#fffff3"
+    },
+
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#fffff3"
+    },
+
+    {
+      "type": "color",
+      "id": "overlay_color_top",
+      "label": "Image overlay — top",
+      "default": "rgba(38,74,61,0.18)",
+      "info": "Use the picker's opacity slider to control overlay strength"
+    },
+
+    {
+      "type": "color",
+      "id": "overlay_color_bottom",
+      "label": "Image overlay — bottom",
+      "default": "rgba(38,74,61,0.28)"
+    },
+
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    { 
+      "type": "text", 
+      "id": "heading", 
+      "label": "Heading", 
+      "default": "Party Petals" 
+    }, 
+
+    { 
+      "type": "text", 
+      "id": "subheading", 
+      "label": "Subheading", 
+      "default": "Florals for your event, created just for you" 
+    },
+
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title font size (desktop)",
+      "min": 32,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 72
+    },
+
+    {
+      "type": "range",
+      "id": "title_font_size_mobile",
+      "label": "Title font size (mobile)",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+
+    {
+      "type": "range",
+      "id": "hero_height",
+      "label": "Hero height (desktop)",
+      "min": 240,
+      "max": 720,
+      "step": 10,
+      "unit": "px",
+      "default": 420
+    },
+
+    {
+      "type": "range",
+      "id": "hero_height_mobile",
+      "label": "Hero height (mobile)",
+      "min": 180,
+      "max": 560,
+      "step": 10,
+      "unit": "px",
+      "default": 320
+    }
+
+  ], 
+  "presets": [ 
+    { 
+      "name": "Party Petals — Hero" 
+    } 
+  ] 
+} 
+{% endschema %}

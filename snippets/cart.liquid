@@ -1,0 +1,3170 @@
+<!-- snippets/cart.liquid -->
+
+
+
+
+
+
+
+{%- doc -%}
+
+
+
+  Renders the cart UI for page and drawer contexts.
+
+
+
+  @param {string} view - Active view, usually 'desktop' or 'drawer'.
+
+
+
+  @param {boolean} [async] - Marks asynchronous updates.
+
+
+
+  @param {section} [section] - Section context for ids and transitions.
+
+
+
+{%- enddoc -%}
+
+
+
+
+
+
+
+{%- liquid
+
+
+
+  assign all_items_added_t = 'cart.all_items_added' | t
+
+
+
+  assign checkout_t = 'cart.checkout' | t
+
+
+
+  assign order_notes_t = 'cart.order_notes' | t
+
+
+
+  assign price_t = 'cart.price' | t
+
+
+
+  assign quantity_t = 'cart.quantity' | t
+
+
+
+  assign subtotal_t = 'cart.subtotal' | t
+
+
+
+  assign total_t = 'cart.total' | t
+
+
+
+  assign your_cart_t = 'cart.your_cart' | t
+
+
+
+  assign update_t = 'cart.update' | t | default: 'Update cart'
+
+
+
+
+
+
+
+  assign empty_html_t = 'cart.empty_html' | t: collections_url: routes.all_products_collection_url
+
+
+
+  if settings.cart--empty-enabled
+
+
+
+    assign empty_html_t = 'cart.empty_with_list_html' | t
+
+
+
+  endif
+
+
+
+
+
+
+
+  assign shipping_taxes_t = 'cart.shipping_taxes_not_included' | t
+
+
+
+  if cart.taxes_included
+
+
+
+    assign shipping_taxes_t = 'cart.shipping_taxes_included' | t
+
+
+
+  endif
+
+
+
+
+
+
+
+  assign checkout_button_style = settings.checkout-button-style
+
+
+
+  assign empty_list = linklists[settings.cart--empty-list]
+
+
+
+
+
+
+
+  assign card_message_limit = 150
+
+
+
+  assign has_greeting_card = false
+
+
+
+
+
+
+
+  for item in cart.items
+
+
+
+    assign product_type_handle = item.product.type | downcase | strip
+
+
+
+    if product_type_handle == 'greeting card'
+
+
+
+      assign has_greeting_card = true
+
+
+
+    endif
+
+
+
+  endfor
+
+
+
+-%}
+
+
+
+
+
+
+
+
+
+
+
+{%- liquid
+
+
+
+  assign show_wedding_fields = false
+
+
+
+
+
+
+
+  for item in cart.items
+
+
+
+    for selected_collection in section.settings.target_collections
+
+
+
+      if item.product.collections contains selected_collection
+
+
+
+        assign show_wedding_fields = true
+
+
+
+      endif
+
+
+
+    endfor
+
+
+
+  endfor
+
+
+
+-%}
+
+
+
+
+
+
+
+{%- capture cart_notes -%}
+  {% if cart.item_count > 0 %}
+
+    {% if show_wedding_fields %}
+
+      <div class="cart--notes cart--notes-custom cart--notes-wedding">
+        <div class="cart--notes-grid">
+
+          <div class="cart--notes-field">
+            <label class="cart--notes--heading" for="CartWeddingHearAboutUs-{{ view }}">
+              How did you hear about us?
+            </label>
+            <input
+              id="CartWeddingHearAboutUs-{{ view }}"
+              class="cart--notes--textarea"
+              type="text"
+              name="attributes[How did you hear about us]"
+              value="{{ cart.attributes['How did you hear about us'] | escape }}"
+            >
+          </div>
+
+          <div class="cart--notes-field">
+            <label class="cart--notes--heading" for="CartWeddingPhotographer-{{ view }}">
+              Who is your photographer?
+            </label>
+            <input
+              id="CartWeddingPhotographer-{{ view }}"
+              class="cart--notes--textarea"
+              type="text"
+              name="attributes[Photographer]"
+              value="{{ cart.attributes['Photographer'] | escape }}"
+            >
+          </div>
+
+          <div class="cart--notes-field">
+            <label class="cart--notes--heading" for="CartWeddingPhotographerPermission-{{ view }}">
+              Are you willing to allow us to reach out to your photographer for wedding imagery to highlight the florals from your day?
+            </label>
+            <select
+              id="CartWeddingPhotographerPermission-{{ view }}"
+              class="cart--notes-select"
+              name="attributes[Photographer Permission]"
+            >
+              <option value="">Select</option>
+              <option
+                value="Yes"
+                {% if cart.attributes['Photographer Permission'] == 'Yes' %}selected{% endif %}
+              >
+                Yes
+              </option>
+              <option
+                value="No"
+                {% if cart.attributes['Photographer Permission'] == 'No' %}selected{% endif %}
+              >
+                No
+              </option>
+            </select>
+          </div>
+
+          <div class="cart--notes-field">
+            <label class="cart--notes--heading" for="CartWeddingNotes-{{ view }}">
+              Notes / preferences
+            </label>
+            <textarea
+              id="CartWeddingNotes-{{ view }}"
+              class="cart--notes--textarea"
+              name="attributes[Notes / preferences]"
+            >{{ cart.attributes['Notes / preferences'] | escape }}</textarea>
+          </div>
+
+        </div>
+      </div>
+
+    {% else %}
+
+      <div class="cart--notes cart--notes-custom cart--notes-default">
+        <div class="cart--notes-grid">
+
+          <div class="cart--notes-field cart--notes-field-message">
+            <label class="cart--notes--heading" for="CartPhysicalCardMessage-{{ view }}">
+              Physical Card Message*
+            </label>
+
+            <textarea
+              id="CartPhysicalCardMessage-{{ view }}"
+              class="cart--notes--textarea"
+              name="attributes[Physical Card Message]"
+              maxlength="{{ card_message_limit }}"
+              data-card-message-field
+              data-limit="{{ card_message_limit }}"
+              data-has-greeting-card="{{ has_greeting_card }}"
+              placeholder="Please include a message for the card, including who it is from. Please note: If your message exceeds 150 characters you'll need to purchase a gift card"
+            >{{ cart.attributes['Physical Card Message'] | escape }}</textarea>
+
+            <div class="cart--notes-meta">
+              <a
+                class="cart--giftcard-link"
+                href="/collections/greeting-cards"
+              >
+                Add a gift card
+              </a>
+
+              <span class="cart--char-remaining">
+                Characters remaining:
+                <span class="cart--char-count">{{ card_message_limit }}</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="cart--notes-field">
+            <label class="cart--notes--heading" for="CartDeliveryInstructions-{{ view }}">
+              Delivery Instructions*
+            </label>
+
+            <textarea
+              id="CartDeliveryInstructions-{{ view }}"
+              class="cart--notes--textarea"
+              name="attributes[Delivery Instructions]"
+              placeholder="Is there a dog at the property? Is there a safe, sheltered place to leave the flowers if no one is home?"
+            >{{ cart.attributes['Delivery Instructions'] | escape }}</textarea>
+          </div>
+
+        </div>
+      </div>
+
+    {% endif %}
+
+  {% endif %}
+{%- endcapture -%}
+
+
+
+<div id="storePickupApp"></div>
+
+
+
+
+
+
+
+{%- capture cart_summary -%}
+
+
+
+  <div class="cart--summary cart--summary-custom">
+
+
+
+    <div class="cart--summary-top">
+
+
+
+      {%- unless cart.cart_level_discount_applications == blank -%}
+
+
+
+        <ul class="cart--discounts">
+
+
+
+          {%- for discount_application in cart.cart_level_discount_applications -%}
+
+
+
+            <li class="cart--discount">
+
+
+
+              <div data-item="nav-text">{{ discount_application.title }}</div>
+
+
+
+              <span data-item="nav-text" data-text-color="gray">
+
+
+
+                –<span class="money">{{ discount_application.total_allocated_amount | money }}</span>
+
+
+
+              </span>
+
+
+
+            </li>
+
+
+
+          {%- endfor -%}
+
+
+
+        </ul>
+
+
+
+      {%- endunless -%}
+
+
+
+
+
+
+
+      <div class="cart--summary-actions">
+
+
+
+        <button
+
+
+
+          type="submit"
+
+
+
+          name="update"
+
+
+
+          class="cart--update-button cart--button cart--checkout-custom"
+
+
+
+          data-item="secondary-button"
+
+
+
+        >
+
+
+
+          Update Cart
+
+
+
+        </button>
+
+
+
+      </div>
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <div class="cart--summary-bottom">
+
+
+
+      <div class="cart--totals cart--totals-custom">
+
+
+
+        <div class="cart--total cart--total-custom">
+
+
+
+          <div class="cart--total-label" data-item="block-heading">
+
+
+
+            {{ subtotal_t }}
+
+
+
+          </div>
+
+
+
+          <div class="cart--total-price money" data-item="nav-text">
+
+
+
+            {{ cart.total_price | money_with_currency }}
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="cart--tax-info" data-item="paragraph">
+
+
+
+          {{ shipping_taxes_t }}
+
+
+
+        </div>
+
+
+
+      </div>
+
+
+
+
+
+
+
+      <button
+
+
+
+        type="submit"
+
+
+
+        name="checkout"
+
+
+
+        class="cart--button cart--checkout-custom"
+
+
+
+        data-item="{{ checkout_button_style }}"
+
+
+
+        data-text="{{ checkout_t }}"
+
+
+
+      >
+
+
+
+        <span class="cart--button-text">
+
+
+
+          {{ checkout_t }}
+
+
+
+        </span>
+
+
+
+        <span class="cart--button-spinner">
+
+
+
+          {%- render 'icons', icon: 'spinner' -%}
+
+
+
+        </span>
+
+
+
+      </button>
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+{%- endcapture -%}
+
+
+
+
+
+
+
+{%- capture item_error -%}
+
+
+
+  <div
+
+
+
+    class="cart--error"
+
+
+
+    data-item="small-text"
+
+
+
+    data-text-color="alert"
+
+
+
+    aria-hidden="true"
+
+
+
+  >
+
+
+
+    {{- all_items_added_t -}}
+
+
+
+  </div>
+
+
+
+{%- endcapture -%}
+
+
+
+
+
+
+
+<cart-element
+
+
+
+  class="cart--root"
+
+
+
+  {% unless section.id == blank %}
+
+
+
+    data-section-id="{{ section.id }}"
+
+
+
+  {% endunless %}
+
+
+
+  data-background-color="none"
+
+
+
+  data-view="{{ view }}"
+
+
+
+  data-container-width="3"
+
+
+
+  {% unless view == 'drawer' %}
+
+
+
+    data-mobile-spacing-above="large"
+
+
+
+    data-mobile-spacing-below="large"
+
+
+
+    data-spacing-above="large"
+
+
+
+    data-spacing-below="large"
+
+
+
+  {% endunless %}
+
+
+
+  {% unless settings.transitions--other %}
+
+
+
+    data-transition-container="cart-{{ view }}"
+
+
+
+    data-transition-type="fade-in"
+
+
+
+    data-transition-cascade="vertical"
+
+
+
+    data-transition-cascade-interval="250"
+
+
+
+  {% endunless %}
+
+
+
+>
+
+
+
+  <form
+
+
+
+    class="cart--form"
+
+
+
+    action="{{ routes.cart_url }}"
+
+
+
+    method="post"
+
+
+
+    novalidate=""
+
+
+
+    {% if view == 'drawer' %}
+
+
+
+      data-drawer-scroll-container
+
+
+
+    {% endif %}
+
+
+
+  >
+
+
+
+    <div class="cart--wrapper">
+
+
+
+      <div class="cart--header">
+
+
+
+        <h2
+
+
+
+          class="cart--title"
+
+
+
+          data-item="section-heading"
+
+
+
+          {% unless settings.transitions--other %}
+
+
+
+            data-transition-item="cart-{{ view }}"
+
+
+
+            data-transition-type="slide-in"
+
+
+
+          {% endunless %}
+
+
+
+        >
+
+
+
+          {{- your_cart_t -}}
+
+
+
+        </h2>
+
+
+
+      </div>
+
+
+
+
+
+
+
+      {%- if settings.cart--shipping-enabled and settings.cart--shipping-limit != blank and cart.item_count > 0 -%}
+
+
+
+        {%- liquid
+
+
+
+          assign free_shipping_limit = settings.cart--shipping-limit | times: 100.0
+
+
+
+
+
+
+
+          if cart.total_price >= free_shipping_limit
+
+
+
+            assign width = 100
+
+
+
+            assign message = settings.cart--shipping-after
+
+
+
+          else
+
+
+
+            assign width = cart.total_price | divided_by: free_shipping_limit | times: 100
+
+
+
+            assign remaining = free_shipping_limit | minus: cart.total_price | money
+
+
+
+            assign message = settings.cart--shipping-before | replace: '[$]', remaining
+
+
+
+          endif
+
+
+
+        -%}
+
+
+
+
+
+
+
+        <div class="cart--shipping">
+
+
+
+          <div class="cart--shipping-message" data-item="paragraph">
+
+
+
+            {{- message -}}
+
+
+
+          </div>
+
+
+
+
+
+
+
+          <div
+
+
+
+            class="cart--shipping-bar"
+
+
+
+            {% unless settings.transitions--other or async %}
+
+
+
+              data-transition-item="cart-{{ view }}"
+
+
+
+              data-transition-type="custom"
+
+
+
+            {% endunless %}
+
+
+
+            style="--progress-percent:{{ width }}%;"
+
+
+
+          ></div>
+
+
+
+        </div>
+
+
+
+      {%- endif -%}
+
+
+
+
+
+
+
+      {%- if cart.item_count > 0 -%}
+
+
+
+        <div class="cart--body">
+
+
+
+          {%- if view == 'desktop' -%}
+
+
+
+            <div class="cart--headings" data-item="nav-text">
+
+
+
+              <div class="cart--heading--image"></div>
+
+
+
+              <div class="cart--heading--title"></div>
+
+
+
+              <div class="cart--heading--price">
+
+
+
+                {{- price_t -}}
+
+
+
+              </div>
+
+
+
+              <div class="cart--heading--quantity">
+
+
+
+                {{- quantity_t -}}
+
+
+
+              </div>
+
+
+
+              <div class="cart--heading--total">
+
+
+
+                {{- total_t -}}
+
+
+
+              </div>
+
+
+
+            </div>
+
+
+
+          {%- endif -%}
+
+
+
+
+
+
+
+          {%- for item in cart.items -%}
+
+
+
+            {%- capture item_image -%}
+
+
+
+              {%- liquid
+
+
+
+                assign preview_image = item.variant.featured_media.preview_image | default: item.product.featured_media.preview_image
+
+
+
+                if item.product.has_only_default_variant
+
+
+
+                  assign preview_image = item.product.media[0].preview_image
+
+
+
+                endif
+
+
+
+              -%}
+
+
+
+
+
+
+
+              <a
+
+
+
+                class="cart--item--image"
+
+
+
+                href="{{ item.url }}"
+
+
+
+                aria-label="{{ item.product.title }}"
+
+
+
+              >
+
+
+
+                {%- if preview_image == blank -%}
+
+
+
+                  {%- render 'placeholder', type: 'product', aspect_ratio: 1, placeholder_index: 1 -%}
+
+
+
+                {%- else -%}
+
+
+
+                  {{-
+
+
+
+                    preview_image
+
+
+
+                    | image_url: width: preview_image.width
+
+
+
+                    | image_tag: widths: "300, 500", sizes: '250px', loading: 'lazy'
+
+
+
+                  -}}
+
+
+
+                {%- endif -%}
+
+
+
+              </a>
+
+
+
+            {%- endcapture -%}
+
+
+
+
+
+
+
+            {%- capture item_quantity -%}
+
+
+
+              {%- assign id = view | append: '-updates-' | append: item.key -%}
+
+
+
+
+
+
+
+              <div class="cart--item--quantity">
+
+
+
+                {%- render 'quantity-selector', id: id, type: 'cart', value: item.quantity -%}
+
+
+
+              </div>
+
+
+
+            {%- endcapture -%}
+
+
+
+
+
+
+
+            {%- capture item_properties -%}
+
+
+
+              {%- for property in item.properties -%}
+
+
+
+                {%- assign property_first_char = property.first | slice: 0 -%}
+
+
+
+                {%- unless property.last == blank or property_first_char == '\_' -%}
+
+
+
+                  <br>
+
+
+
+                  {{ property.first }}:
+
+
+
+                  {%- if property.last contains '/uploads/' -%}
+
+
+
+                    <a href="{{ property.last }}">
+
+
+
+                      {{ property.last | split: '/' | last }}
+
+
+
+                    </a>
+
+
+
+                  {%- else -%}
+
+
+
+                    {{ property.last }}
+
+
+
+                  {%- endif -%}
+
+
+
+                {%- endunless -%}
+
+
+
+              {%- endfor -%}
+
+
+
+            {%- endcapture -%}
+
+
+
+
+
+
+
+            {%- capture item_price -%}
+
+
+
+              <div class="cart--item--price" data-item="nav-text">
+
+
+
+                {%- unless item.original_price == item.final_price -%}
+
+
+
+                  <div data-item="nav-text" data-text-color="gray">
+
+
+
+                    <s class="money">{{ item.original_price | money }}</s>
+
+
+
+                  </div>
+
+
+
+                {%- endunless -%}
+
+
+
+
+
+
+
+                <div class="money" data-item="nav-text">
+
+
+
+                  {{- item.final_price | money -}}
+
+
+
+                </div>
+
+
+
+
+
+
+
+                {%- if item.unit_price_measurement -%}
+
+
+
+                  <div class="cart--item--unit-price-container" data-item="small-text">
+
+
+
+                    {%- liquid
+
+
+
+                      echo item.unit_price | money | append: '/'
+
+
+
+                      if item.unit_price_measurement.reference_value != 1
+
+
+
+                        echo item.unit_price_measurement.reference_value
+
+
+
+                      endif
+
+
+
+                      echo item.unit_price_measurement.reference_unit
+
+
+
+                    -%}
+
+
+
+                  </div>
+
+
+
+                {%- endif -%}
+
+
+
+
+
+
+
+                {% if item.line_level_discount_allocations.size > 0 %}
+
+
+
+                  <div class="money" data-item="nav-text" data-text-color="gray">
+
+
+
+                    {%- for discount_allocation in item.line_level_discount_allocations -%}
+
+
+
+                      {{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})
+
+
+
+                    {%- endfor -%}
+
+
+
+                  </div>
+
+
+
+                {% endif %}
+
+
+
+              </div>
+
+
+
+            {%- endcapture -%}
+
+
+
+
+
+
+
+            <div
+
+
+
+              class="cart--item"
+
+
+
+              data-variant-id="{{ item.variant_id }}"
+
+
+
+              data-management="{{ item.variant.inventory_management }}"
+
+
+
+              data-policy="{{ item.variant.inventory_policy }}"
+
+
+
+              data-quantity="{{ item.variant.inventory_quantity | default: 0 }}"
+
+
+
+              data-line-num="{{ forloop.index }}"
+
+
+
+              {% unless settings.transitions--other %}
+
+
+
+                data-transition-item="cart-{{ view }}"
+
+
+
+                {% if async %}
+
+
+
+                  data-transition-active="true"
+
+
+
+                {% endif %}
+
+
+
+              {% endunless %}
+
+
+
+            >
+
+
+
+              {%- if view == 'desktop' -%}
+
+
+
+                {{- item_image -}}
+
+
+
+
+
+
+
+                <div class="cart--item-details">
+
+
+
+                  <div class="cart--item--title">
+
+
+
+                    <div data-item="block-heading">
+
+
+
+                      <a href="{{ item.url }}">{{ item.product.title }}</a>
+
+
+
+                    </div>
+
+
+
+
+
+
+
+                    {%- unless item.variant.title contains 'Default' -%}
+
+
+
+                      <div class="cart--item--variant-name" data-item="nav-text">
+
+
+
+                        <a href="{{ item.url }}">{{ item.variant.title }}</a>
+
+
+
+                      </div>
+
+
+
+                    {%- endunless -%}
+
+
+
+
+
+
+
+                    {%- if item.selling_plan_allocation -%}
+
+
+
+                      <div class="cart--item--selling-plan" data-item="small-text">
+
+
+
+                        {{- item.selling_plan_allocation.selling_plan.name -}}
+
+
+
+                      </div>
+
+
+
+                    {%- endif -%}
+
+
+
+
+
+
+
+                    {%- liquid
+
+
+
+                      if item.properties.size > 0
+
+
+
+                        echo item_properties
+
+
+
+                      endif
+
+
+
+
+
+
+
+                      echo item_error
+
+
+
+                    -%}
+
+
+
+                  </div>
+
+
+
+                </div>
+
+
+
+
+
+
+
+                {{- item_price -}}
+
+
+
+                {{- item_quantity -}}
+
+
+
+
+
+
+
+                <div class="cart--item--total" data-item="nav-text">
+
+
+
+                  {%- unless item.original_line_price == item.final_line_price -%}
+
+
+
+                    <div data-item="nav-text" data-text-color="gray">
+
+
+
+                      <s class="money">{{ item.original_line_price | money }}</s>
+
+
+
+                    </div>
+
+
+
+                  {%- endunless -%}
+
+
+
+
+
+
+
+                  <div class="money">
+
+
+
+                    {{- item.final_line_price | money -}}
+
+
+
+                  </div>
+
+
+
+                </div>
+
+
+
+
+
+
+
+              {%- else -%}
+
+
+
+                <div class="cart--item--title">
+
+
+
+                  <div data-item="block-heading">
+
+
+
+                    <a href="{{ item.url }}">{{ item.product.title }}</a>
+
+
+
+                  </div>
+
+
+
+
+
+
+
+                  {{- item_error -}}
+
+
+
+                </div>
+
+
+
+
+
+
+
+                {{- item_image -}}
+
+
+
+
+
+
+
+                <div class="cart--item--info">
+
+
+
+                  {%- unless item.variant.title contains 'Default' -%}
+
+
+
+                    <div class="cart--item--variant-name" data-item="nav-text">
+
+
+
+                      <a href="{{ item.url }}">{{ item.variant.title }}</a>
+
+
+
+                    </div>
+
+
+
+                  {%- endunless -%}
+
+
+
+
+
+
+
+                  {%- if item.selling_plan_allocation -%}
+
+
+
+                    <div class="cart--item--selling-plan" data-item="small-text">
+
+
+
+                      {{- item.selling_plan_allocation.selling_plan.name -}}
+
+
+
+                    </div>
+
+
+
+                  {%- endif -%}
+
+
+
+
+
+
+
+                  {%- if item.properties.size > 0 -%}
+
+
+
+                    <div class="cart--item-properties">
+
+
+
+                      {{- item_properties -}}
+
+
+
+                    </div>
+
+
+
+                  {%- endif -%}
+
+
+
+
+
+
+
+                  {{- item_price -}}
+
+
+
+                  {{- item_quantity -}}
+
+
+
+                </div>
+
+
+
+              {%- endif -%}
+
+
+
+            </div>
+
+
+
+          {%- endfor -%}
+
+
+
+        </div>
+
+
+
+      {%- endif -%}
+
+
+
+
+
+
+
+      {%- if cart.item_count > 0 and view == 'desktop' -%}
+
+
+
+        <div class="cart--footer cart--footer-custom"
+
+
+
+          {% unless settings.transitions--other %}
+
+
+
+            data-transition-item="cart-{{ view }}"
+
+
+
+            {%- if async -%}
+
+
+
+              data-transition-active="true"
+
+
+
+            {%- endif -%}
+
+
+
+          {% endunless %}>
+
+
+
+          <div class="cart--footer-left">
+              <div
+                class="cart-notes-dynamic-slot"
+                data-cart-notes-dynamic
+                data-cart-view="{{ view }}"
+              >
+                {{- cart_notes -}}
+              </div>
+            </div>
+
+
+
+
+
+
+
+          <div class="cart--footer-right">
+
+
+
+            {{- cart_summary -}}
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+      {%- endif -%}
+
+
+
+
+
+
+
+      <div class="cart--empty" data-container="block">
+
+
+
+        <div class="cart--empty-text" data-item="paragraph">
+
+
+
+          {{- empty_html_t -}}
+
+
+
+        </div>
+
+
+
+
+
+
+
+        {%- if settings.cart--empty-enabled and empty_list.links.size > 0 -%}
+
+
+
+          <div class="cart--empty-list" data-container="block">
+
+
+
+            {%- for link in empty_list.links -%}
+
+
+
+              <a class="cart--empty-link" href="{{ link.url }}" data-item="nav-text">
+
+
+
+                <span>{{- link.title -}}</span>
+
+
+
+              </a>
+
+
+
+            {%- endfor -%}
+
+
+
+          </div>
+
+
+
+        {%- endif -%}
+
+
+
+      </div>
+
+
+
+    </div>
+
+
+
+
+
+
+
+    {% if cart.item_count > 0 and view != 'desktop' %}
+      <div
+        class="cart-notes-dynamic-slot"
+        data-cart-notes-dynamic
+        data-cart-view="{{ view }}"
+      >
+        {{- cart_notes -}}
+      </div>
+
+      {{- cart_summary -}}
+    {% endif %}
+
+
+
+  </form>
+
+
+
+</cart-element>
+
+
+
+
+
+
+
+<style>
+
+
+
+  .cart--footer-custom {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: minmax(0, 1fr) 360px;
+
+
+
+    gap: 40px;
+
+
+
+    align-items: start;
+
+
+
+    margin-top: 36px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--footer-left,
+
+
+
+  .cart--footer-right {
+
+
+
+    min-width: 0;
+
+
+
+  }
+
+
+
+.cart--notes--textarea {
+
+
+
+    color: black;
+
+
+
+}
+
+
+
+.cart--notes--textarea::placeholder {
+
+
+
+    color: #80808091;
+
+
+
+}
+
+
+
+  .cart--notes-custom {
+
+
+
+    width: 100%;
+
+
+
+    max-width: 100% !important;
+
+
+
+  }
+
+
+
+.cart--footer.cart--footer-custom {
+
+
+
+  display: block !important;
+
+
+
+}
+
+
+
+  button.cart--update-button.cart--button.cart--checkout-custom {
+
+
+
+    background: #aacc97;
+
+
+
+    color: #264a3d;
+
+
+
+    text-transform: capitalize;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--notes-grid {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+
+
+    gap: 22px;
+
+
+
+    align-items: start;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--notes-field {
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    min-width: 0;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--notes--heading {
+
+
+
+    display: block;
+
+
+
+    margin-bottom: 12px;
+
+
+
+    text-transform: uppercase;
+
+
+
+    letter-spacing: 0.22em;
+
+
+
+    font-size: 14px;
+
+
+
+    line-height: 1.4;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--notes--textarea {
+
+
+
+    width: 100%;
+
+
+
+    min-height: 132px;
+
+
+
+    resize: vertical;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--notes-meta {
+
+
+
+    display: flex;
+
+
+
+    justify-content: space-between;
+
+
+
+    align-items: center;
+
+
+
+    gap: 16px;
+
+
+
+    margin-top: 10px;
+
+
+
+    flex-wrap: wrap;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--giftcard-link {
+
+
+
+    text-decoration: none;
+
+
+
+    font-weight: 600;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--char-remaining {
+
+
+
+    white-space: nowrap;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--summary-custom {
+
+
+
+    width: 100%;
+
+
+
+    MARGIN-TOP:50PX;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--summary-top {
+
+
+
+    display: flex;
+
+
+
+    justify-content: flex-end;
+
+
+
+    margin-bottom: 22px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--summary-actions {
+
+
+
+    display: flex;
+
+
+
+    justify-content: flex-end;
+
+
+
+    width: 100%;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--update-button,
+
+
+
+  .cart--checkout-custom {
+
+
+
+    min-width: 178px;
+
+
+
+    border-radius: 999px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--summary-bottom {
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    align-items: flex-end;
+
+
+
+    gap: 18px;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--totals-custom {
+
+
+
+    width: 100%;
+
+
+
+    max-width: 240px;
+
+
+
+    text-align: center;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--total-custom {
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    gap: 8px;
+
+
+
+    align-items: center;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--total-label {
+
+
+
+    text-transform: uppercase;
+
+
+
+    letter-spacing: 0.32em;
+
+
+
+  }
+
+
+
+
+
+
+
+  .cart--tax-info {
+
+
+
+    margin-top: 10px;
+
+
+
+    text-align: center;
+
+
+
+  }
+
+
+
+
+
+
+
+  @media only screen and (max-width: 990px) {
+
+
+
+    .cart--footer-custom {
+
+
+
+      grid-template-columns: 1fr;
+
+
+
+      gap: 28px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .cart--footer-right {
+
+
+
+      width: 100%;
+
+
+
+    }
+
+
+
+
+
+
+
+    .cart--summary-top,
+
+
+
+    .cart--summary-actions,
+
+
+
+    .cart--summary-bottom {
+
+
+
+      justify-content: flex-start;
+
+
+
+      align-items: flex-start;
+
+
+
+    }
+
+
+
+
+
+
+
+    .cart--totals-custom {
+
+
+
+      max-width: none;
+
+
+
+      text-align: left;
+
+
+
+    }
+
+
+
+
+
+
+
+    .cart--total-custom {
+
+
+
+      align-items: flex-start;
+
+
+
+    }
+
+
+
+
+
+
+
+    .cart--tax-info {
+
+
+
+      text-align: left;
+
+
+
+    }
+
+
+
+  }
+
+
+
+
+
+
+
+  @media only screen and (max-width: 767px) {
+
+
+
+    .cart--notes-grid {
+
+
+
+      grid-template-columns: 1fr;
+
+
+
+      gap: 20px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .cart--notes-meta {
+
+
+
+      align-items: flex-start;
+
+
+
+      flex-direction: column;
+
+
+
+    }
+
+
+
+
+
+
+
+    .cart--update-button,
+
+
+
+    .cart--checkout-custom {
+
+
+
+      min-width: 100%;
+
+
+
+      width: 100%;
+
+
+
+    }
+
+
+
+
+
+
+
+    .cart--summary-top,
+
+
+
+    .cart--summary-actions,
+
+
+
+    .cart--summary-bottom {
+
+
+
+      width: 100%;
+
+
+
+    }
+
+
+
+  }
+
+
+
+
+
+
+
+/* Custom cart fields styling */
+
+
+
+.cart--notes-field input.cart--notes--textarea,
+
+
+
+.cart--notes-field select.cart--notes--textarea {
+
+
+
+  width: 100%;
+
+
+
+  height: 52px;
+
+
+
+  padding: 14px 16px;
+
+
+
+  background: #fff;
+
+
+
+  border: 1px solid #d8d8d8;
+
+
+
+  color: #222;
+
+
+
+  font-size: 15px;
+
+
+
+  border-radius: 0;
+
+
+
+}
+
+
+
+
+
+
+
+.cart--notes-field textarea.cart--notes--textarea {
+
+
+
+  width: 100%;
+
+
+
+  min-height: 140px;
+
+
+
+  padding: 14px 16px;
+
+
+
+  background: #fff;
+
+
+
+  border: 1px solid #d8d8d8;
+
+
+
+  color: #222;
+
+
+
+  font-size: 15px;
+
+
+
+  resize: vertical;
+
+
+
+}
+
+
+
+
+
+
+
+.cart--notes-field select.cart--notes--textarea {
+
+
+
+  cursor: pointer;
+
+
+
+}
+
+
+
+
+
+
+
+.cart--notes-field .cart--notes--heading {
+
+
+
+  margin-bottom: 12px;
+
+
+
+}
+
+
+
+
+
+
+
+.cart--notes-grid {
+
+
+
+  display: grid;
+
+
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+
+
+  gap: 28px;
+
+
+
+}
+
+
+
+
+
+
+
+@media only screen and (max-width: 767px) {
+
+
+
+  .cart--notes-grid {
+
+
+
+    grid-template-columns: 1fr;
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+.cart--notes-field select.cart--notes-select {
+
+
+
+  width: 100%;
+
+
+
+  height: 52px;
+
+
+
+  min-height: 52px;
+
+
+
+  padding: 0 16px;
+
+
+
+  background: #fff;
+
+
+
+  border: 1px solid #d8d8d8;
+
+
+
+  color: #222;
+
+
+
+  font-size: 15px;
+
+
+
+  border-radius: 0;
+
+
+
+  cursor: pointer;
+
+
+
+}
+
+
+
+
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+<style>
+  .cart--notes-default .cart--notes-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .cart--notes-default .cart--giftcard-link {
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .cart--notes-default .cart--char-remaining {
+    white-space: nowrap;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .cart--notes-default .cart--notes-meta {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    function initCartMessageCounters(scope) {
+      var root = scope || document;
+
+      root.querySelectorAll('[data-card-message-field]').forEach(function (field) {
+        if (field.dataset.counterInitialized === 'true') return;
+
+        field.dataset.counterInitialized = 'true';
+
+        var limit = parseInt(field.getAttribute('data-limit'), 10) || 150;
+        var wrapper = field.closest('.cart--notes-field-message');
+        var countEl = wrapper ? wrapper.querySelector('.cart--char-count') : null;
+
+        function updateCount() {
+          if (!countEl) return;
+          var remaining = limit - field.value.length;
+          if (remaining < 0) remaining = 0;
+          countEl.textContent = remaining;
+        }
+
+        field.addEventListener('input', updateCount);
+        updateCount();
+      });
+    }
+
+    window.initGreenRoomCartMessageCounters = initCartMessageCounters;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initCartMessageCounters(document);
+    });
+  })();
+</script>
+
+<script>
+  (function () {
+    if (window.greenRoomDynamicCartFieldsV2Initialized) return;
+    window.greenRoomDynamicCartFieldsV2Initialized = true;
+
+    var refreshTimer = null;
+    var currentSignature = null;
+    var sectionRefreshInProgress = false;
+
+    function getSignature(cart) {
+      if (!cart || !Array.isArray(cart.items)) return '';
+
+      return cart.items
+        .map(function (item) {
+          return item.key + ':' + item.quantity;
+        })
+        .sort()
+        .join('|');
+    }
+
+    function getSectionId() {
+      var root = document.querySelector('cart-element.cart--root[data-section-id]');
+      return root ? root.getAttribute('data-section-id') : '';
+    }
+
+    function refreshNotesSection() {
+      if (sectionRefreshInProgress) return;
+
+      var sectionId = getSectionId();
+      if (!sectionId) return;
+
+      sectionRefreshInProgress = true;
+
+      var url = window.location.pathname
+        + (window.location.search ? window.location.search + '&' : '?')
+        + 'section_id='
+        + encodeURIComponent(sectionId);
+
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        cache: 'no-store'
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Unable to refresh cart section.');
+          }
+
+          return response.text();
+        })
+        .then(function (html) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(html, 'text/html');
+
+          document.querySelectorAll('[data-cart-notes-dynamic]').forEach(function (currentSlot) {
+            var view = currentSlot.getAttribute('data-cart-view') || '';
+            var freshSlot = doc.querySelector(
+              '[data-cart-notes-dynamic][data-cart-view="' + view + '"]'
+            );
+
+            var savedValues = {};
+
+            currentSlot.querySelectorAll('input[name], textarea[name], select[name]').forEach(function (field) {
+              savedValues[field.name] = field.value;
+            });
+
+            if (freshSlot) {
+              currentSlot.innerHTML = freshSlot.innerHTML;
+
+              currentSlot.querySelectorAll('input[name], textarea[name], select[name]').forEach(function (field) {
+                if (Object.prototype.hasOwnProperty.call(savedValues, field.name)) {
+                  field.value = savedValues[field.name];
+                }
+              });
+
+              if (typeof window.initGreenRoomCartMessageCounters === 'function') {
+                window.initGreenRoomCartMessageCounters(currentSlot);
+              }
+            } else {
+              currentSlot.innerHTML = '';
+            }
+          });
+        })
+        .catch(function (error) {
+          console.error('Cart fields AJAX refresh error:', error);
+        })
+        .finally(function () {
+          sectionRefreshInProgress = false;
+        });
+    }
+
+    function checkCart(forceRefresh) {
+      fetch('/cart.js', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        cache: 'no-store'
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Unable to read cart.');
+          }
+
+          return response.json();
+        })
+        .then(function (cart) {
+          var nextSignature = getSignature(cart);
+
+          if (
+            forceRefresh ||
+            currentSignature === null ||
+            nextSignature !== currentSignature
+          ) {
+            currentSignature = nextSignature;
+            refreshNotesSection();
+          }
+        })
+        .catch(function (error) {
+          console.error('Cart fields state check error:', error);
+        });
+    }
+
+    function queueCheck(forceRefresh) {
+      clearTimeout(refreshTimer);
+
+      refreshTimer = setTimeout(function () {
+        checkCart(Boolean(forceRefresh));
+      }, 180);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      checkCart(false);
+
+      document.querySelectorAll('cart-element.cart--root').forEach(function (root) {
+        var observer = new MutationObserver(function () {
+          queueCheck(false);
+        });
+
+        observer.observe(root, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+      });
+    });
+
+    [
+      'cart:updated',
+      'cart:update',
+      'cart:refresh',
+      'cart:change',
+      'cart-drawer:updated'
+    ].forEach(function (eventName) {
+      document.addEventListener(eventName, function () {
+        queueCheck(true);
+      });
+    });
+
+    document.addEventListener('click', function (event) {
+      if (
+        event.target.closest(
+          'cart-element [data-remove-item], ' +
+          'cart-element .cart--item--remove, ' +
+          'cart-element a[href*="/cart/change"]'
+        )
+      ) {
+        setTimeout(function () {
+          queueCheck(true);
+        }, 250);
+      }
+    });
+
+    document.addEventListener('change', function (event) {
+      if (
+        event.target.closest('cart-element') &&
+        (
+          event.target.matches('input[name^="updates"]') ||
+          event.target.closest('.quantity-selector')
+        )
+      ) {
+        setTimeout(function () {
+          queueCheck(true);
+        }, 220);
+      }
+    });
+  })();
+</script>

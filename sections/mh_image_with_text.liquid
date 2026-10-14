@@ -1,0 +1,500 @@
+<style>
+  #shopify-section-{{ section.id }} .mh_image_with_text_d2 {
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .page-width {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  #shopify-section-{{ section.id }} .section_wrapper_d2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 520px);
+    gap: 64px;
+    align-items: center;
+  }
+
+  #shopify-section-{{ section.id }} .left_side_d2 {
+    max-width: 560px;
+    padding-right: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .title_d2 {
+    color: {{ section.settings.title_color }};
+    margin-bottom: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .title_d2 * {
+    color: {{ section.settings.title_color }} !important;
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .title_d2 h1 {
+    font-size: 52px;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .title_d2 h2 {
+    font-size: 44px;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .title_d2 h3 {
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+
+  #shopify-section-{{ section.id }} .title_d2 strong {
+    display: block;
+    font-size: 24px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .text_d2 {
+    color: {{ section.settings.text_color }};
+    margin-bottom: 28px;
+  }
+
+  #shopify-section-{{ section.id }} .text_d2,
+  #shopify-section-{{ section.id }} .text_d2 * {
+    color: {{ section.settings.text_color }} !important;
+  }
+
+  #shopify-section-{{ section.id }} .text_d2 p {
+    margin: 0 0 16px;
+    font-size: 20px;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+  }
+
+  #shopify-section-{{ section.id }} .text_d2 p:last-child {
+    margin-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .list_wrapper_d2 {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .list_d2 {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  #shopify-section-{{ section.id }} .list_d2,
+  #shopify-section-{{ section.id }} .list_d2 * {
+    color: {{ section.settings.text_color }} !important;
+  }
+
+  #shopify-section-{{ section.id }} .list_icon_d2 {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-top: 1px;
+    display: block;
+    animation: mh-list-rotate-{{ section.id }} 10s linear infinite;
+    transform-origin: center center;
+  }
+
+  #shopify-section-{{ section.id }} .list_d2 p {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.4;
+    letter-spacing: 0.03em;
+  }
+
+  #shopify-section-{{ section.id }} .button_d2 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 28px;
+    min-width: 220px;
+    min-height: 68px;
+    padding: 16px 28px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    border: 0;
+    transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+    will-change: transform;
+  }
+
+  #shopify-section-{{ section.id }} .button_d2:hover {
+    transform: translateY(-3px) scale(1.05);
+    filter: brightness(1.05);
+  }
+
+  #shopify-section-{{ section.id }} .button_d2 h4 {
+    margin: 0;
+    color: {{ section.settings.button_text_color }};
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 700;
+    transition: transform 0.3s ease;
+  }
+
+  #shopify-section-{{ section.id }} .button_d2:hover h4 {
+    transform: scale(1.04);
+  }
+
+  #shopify-section-{{ section.id }} .right_side_d2 {
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .image_frame_d2 {
+    position: relative;
+    background: transparent;
+    padding: 0;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .image_inner_d2 {
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .right_image_d2 {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+  }
+
+  @keyframes mh-list-rotate-{{ section.id }} {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .page-width {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .section_wrapper_d2 {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+
+    #shopify-section-{{ section.id }} .left_side_d2 {
+      max-width: 100%;
+      padding-right: 0;
+    }
+
+    #shopify-section-{{ section.id }} .title_d2 h1 {
+      font-size: 44px;
+    }
+
+    #shopify-section-{{ section.id }} .title_d2 h2 {
+      font-size: 38px;
+    }
+
+    #shopify-section-{{ section.id }} .title_d2 h3 {
+      font-size: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .text_d2 p {
+      font-size: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .list_d2 {
+      grid-template-columns: 36px minmax(0, 1fr);
+    }
+
+    #shopify-section-{{ section.id }} .list_icon_d2 {
+      width: 36px;
+      height: 36px;
+    }
+
+    #shopify-section-{{ section.id }} .list_d2 p {
+      font-size: 17px;
+    }
+
+    #shopify-section-{{ section.id }} .button_d2 {
+      margin-top: 24px;
+      min-height: 64px;
+      padding: 14px 24px;
+    }
+
+    #shopify-section-{{ section.id }} .button_d2 h4 {
+      font-size: 17px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .page-width {
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .section_wrapper_d2 {
+      gap: 26px;
+    }
+
+    #shopify-section-{{ section.id }} .title_d2 {
+      margin-bottom: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .title_d2 h1 {
+      font-size: 32px;
+    }
+
+    #shopify-section-{{ section.id }} .title_d2 h2 {
+      font-size: 28px;
+    }
+
+    #shopify-section-{{ section.id }} .title_d2 h3 {
+      font-size: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .text_d2 {
+      margin-bottom: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .text_d2 p {
+      font-size: 15px;
+      margin-bottom: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .list_wrapper_d2 {
+      gap: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .list_d2 {
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .list_icon_d2 {
+      width: 30px;
+      height: 30px;
+      margin-top: 2px;
+    }
+
+    #shopify-section-{{ section.id }} .list_d2 p {
+      font-size: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .button_d2 {
+      margin-top: 22px;
+      min-width: 200px;
+      min-height: 58px;
+      padding: 12px 20px;
+    }
+
+    #shopify-section-{{ section.id }} .button_d2 h4 {
+      font-size: 15px;
+    }
+  }
+</style>
+
+{% if section.settings.list_image != blank %}
+  {% capture list_image %}
+    <img
+      class="list_icon_d2"
+      src="{{ section.settings.list_image | image_url: width: 100 }}"
+      alt="{{ section.settings.list_image.alt | escape }}"
+      loading="lazy"
+      width="40"
+      height="40"
+    >
+  {% endcapture %}
+{% endif %}
+
+<section class="mh_image_with_text_d2">
+  <div class="page-width">
+    <div class="section_wrapper_d2">
+      <div class="left_side_d2">
+        {% if section.settings.title != blank %}
+          <div class="title_d2">{{ section.settings.title }}</div>
+        {% endif %}
+
+        {% if section.settings.text != blank %}
+          <div class="text_d2">{{ section.settings.text }}</div>
+        {% endif %}
+
+        {% if section.blocks.size > 0 %}
+          <div class="list_wrapper_d2">
+            {% for block in section.blocks %}
+              {% if block.settings.text != blank %}
+                <div class="list_d2" {{ block.shopify_attributes }}>
+                  {% if section.settings.list_image != blank %}
+                    {{ list_image }}
+                  {% else %}
+                    <span></span>
+                  {% endif %}
+                  <div>{{ block.settings.text }}</div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if section.settings.button_text != blank %}
+          <a
+            class="button_d2"
+            href="{{ section.settings.button_url }}"
+            {% if section.settings.button_url != blank %}target="_blank"{% endif %}
+            {% if section.settings.button_image != blank %}
+              style="background-image: url('{{ section.settings.button_image | image_url: width: 500 }}');"
+            {% else %}
+              style="background-color: {{ section.settings.title_color }};"
+            {% endif %}
+          >
+            <h4>{{ section.settings.button_text }}</h4>
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="right_side_d2">
+        {% if section.settings.image != blank %}
+          <div class="image_frame_d2">
+            <div class="image_inner_d2">
+              <img
+                class="right_image_d2"
+                src="{{ section.settings.image | image_url: width: 1200 }}"
+                alt="{{ section.settings.image.alt | escape }}"
+                loading="lazy"
+                width="{{ section.settings.image.width }}"
+                height="{{ section.settings.image.height }}"
+              >
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "TIC Image With Text",
+  "presets": [
+    {
+      "name": "TIC Image With Text"
+    }
+  ],
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f7f3e8"
+    },
+    {
+      "type": "header",
+      "content": "__ Left Side __"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#d58ca1"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#4b5d5a"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "image_picker",
+      "id": "button_image",
+      "label": "Button Image"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "list_image",
+      "label": "List Image"
+    },
+    {
+      "type": "header",
+      "content": "__ Right Side __"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "list",
+      "name": "List Item",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

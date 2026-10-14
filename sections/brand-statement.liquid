@@ -1,0 +1,641 @@
+<!-- sections/brand-statement.liquid -->
+
+{%- liquid
+  assign bg_color = section.settings.background-color
+  assign border = section.settings.border
+  assign frame_enabled = section.settings.frame-enabled
+  assign mobile_text_alignment = section.settings.mobile-text-alignment
+  assign text_alignment = section.settings.text-alignment
+  assign text_color = section.settings.text-color
+  assign text_width = section.settings.text-width
+-%}
+
+<div
+  class="brand-statement--root"
+  data-section-id="{{ section.id }}"
+  data-background-color="{{ bg_color }}"
+  data-border="{{ border }}"
+  data-frame-enabled="{{ frame_enabled }}"
+  data-text-color="{{ text_color }}"
+>
+  <div class="brand-statement--wrapper">
+    {%- if frame_enabled -%}
+      <div class="brand-statement--border" data-mq="medium-large">
+        {%- render 'icons', icon: 'text-border' -%}
+      </div>
+    {%- endif -%}
+
+    {%-
+      render 'section-blocks',
+      section_id: section.id,
+      blocks: section.blocks,
+      mobile_x_alignment: mobile_text_alignment,
+      text_color: text_color,
+      text_width: text_width,
+      x_alignment: text_alignment
+    -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .brand-statement--root {
+    @media (min-width: 768px) {
+      --frame-aspect-ratio: calc(1236 / 735);
+      padding: 120px;
+
+      &:before {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        padding-top: calc(100% / var(--frame-aspect-ratio));
+      }
+
+      .section-blocks--wrapper {
+        --text-padding: var(--spacing--section--x);
+      }
+    }
+
+    @media (max-width: 767px) {
+      padding: var(--spacing--8) var(--spacing--item);
+    }
+  }
+
+  .brand-statement--wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-statement--border {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+  {
+    "name": "Brand statement",
+    "class": "section--brand-statement",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General layout"
+      },
+      {
+        "id": "border",
+        "label": "Border",
+        "type": "select",
+        "options": [
+          {
+            "label": "Top",
+            "value": "top"
+          },
+          {
+            "label": "Bottom",
+            "value": "bottom"
+          },
+          {
+            "label": "Both",
+            "value": "both"
+          },
+          {
+            "label": "None",
+            "value": "none"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "id": "background-color",
+        "label": "Background color",
+        "type": "select",
+        "options": [
+          {
+            "label": "None",
+            "value": "none"
+          },
+          {
+            "label": "Light",
+            "value": "light"
+          },
+          {
+            "label": "Dark",
+            "value": "dark"
+          },
+          {
+            "label": "Accent 1",
+            "value": "accent-1"
+          },
+          {
+            "label": "Accent 2",
+            "value": "accent-2"
+          },
+          {
+            "label": "Accent 3",
+            "value": "accent-3"
+          }
+        ],
+        "default": "none"
+      },
+      {
+        "id": "frame-enabled",
+        "label": "Show decorative frame",
+        "type": "checkbox",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Text layout"
+      },
+      {
+        "id": "text-color",
+        "label": "Text color",
+        "type": "select",
+        "options": [
+          {
+            "label": "Light",
+            "value": "white"
+          },
+          {
+            "label": "Dark",
+            "value": "body"
+          }
+        ],
+        "default": "body"
+      },
+      {
+        "id": "text-alignment",
+        "label": "Text alignment",
+        "type": "text_alignment",
+        "default": "center"
+      },
+      {
+        "id": "text-width",
+        "label": "Text width",
+        "type": "range",
+        "min": 300,
+        "max": 800,
+        "step": 25,
+        "unit": "px",
+        "default": 400
+      },
+      {
+        "type": "header",
+        "content": "Mobile"
+      },
+      {
+        "id": "mobile-text-alignment",
+        "label": "Text alignment",
+        "type": "text_alignment",
+        "default": "center"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "overline",
+        "name": "Overline",
+        "settings": [
+          {
+            "id": "overline",
+            "label": "Overline",
+            "type": "text",
+            "default": "Our brand"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "name": "Heading",
+        "settings": [
+          {
+            "id": "heading-type",
+            "label": "Heading type",
+            "type": "select",
+            "options": [
+              { "label": "Banner", "value": "banner-heading" },
+              { "label": "Featured", "value": "featured-heading" },
+              { "label": "Large", "value": "section-heading" },
+              { "label": "Medium", "value": "block-heading" }
+            ],
+            "default": "featured-heading"
+          },
+          {
+            "id": "title",
+            "label": "Heading",
+            "type": "text",
+            "default": "We believe in [quality]",
+            "info": "Highlight headings by wrapping text with square brackets, ie. This is [highlighted]."
+          },
+          {
+            "id": "highlight-type",
+            "label": "Highlight type",
+            "type": "select",
+            "options": [
+              {
+                "label": "Italic",
+                "value": "italic"
+              },
+              {
+                "label": "Bold",
+                "value": "bold"
+              },
+              {
+                "label": "Bold italic",
+                "value": "bold-italic"
+              },
+              {
+                "label": "Text color",
+                "value": "color"
+              },
+              {
+                "label": "Outlined",
+                "value": "outlined"
+              },
+              {
+                "label": "Highlight",
+                "value": "highlight"
+              },
+              {
+                "label": "Half highlight",
+                "value": "half-highlight"
+              },
+              {
+                "label": "Underline",
+                "value": "underline"
+              },
+              {
+                "label": "Reverse opacity",
+                "value": "reverse-opacity"
+              }
+            ],
+            "default": "italic"
+          },
+          {
+            "id": "highlight-color",
+            "label": "Highlight color",
+            "type": "select",
+            "options": [
+              {
+                "label": "Transparent",
+                "value": "transparent"
+              },
+              {
+                "label": "Light",
+                "value": "light"
+              },
+              {
+                "label": "Dark",
+                "value": "dark"
+              },
+              {
+                "label": "Accent 1",
+                "value": "accent-1"
+              },
+              {
+                "label": "Accent 2",
+                "value": "accent-2"
+              },
+              {
+                "label": "Accent 3",
+                "value": "accent-3"
+              }
+            ],
+            "default": "accent-2"
+          },
+          {
+            "id": "highlight-text",
+            "label": "Highlighted text color",
+            "type": "select",
+            "options": [
+              {
+                "label": "None",
+                "value": "none"
+              },
+              {
+                "label": "Light",
+                "value": "light"
+              },
+              {
+                "label": "Dark",
+                "value": "dark"
+              },
+              {
+                "label": "Accent 1",
+                "value": "accent-1"
+              },
+              {
+                "label": "Accent 2",
+                "value": "accent-2"
+              },
+              {
+                "label": "Accent 3",
+                "value": "accent-3"
+              }
+            ],
+            "default": "none"
+          }
+        ]
+      },
+      {
+        "type": "description",
+        "name": "Description",
+        "settings": [
+          {
+            "id": "description",
+            "label": "Description",
+            "type": "richtext",
+            "default": "<p>Our commitment to excellence drives everything we do. We craft products with care, source materials responsibly, and build lasting relationships with our community.</p>"
+          },
+          {
+            "id": "mobile-hide-enabled",
+            "label": "Hide in mobile",
+            "type": "checkbox",
+            "default": false
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "name": "Button",
+        "settings": [
+          {
+            "id": "text",
+            "label": "Text",
+            "type": "text",
+            "default": "Our story"
+          },
+          {
+            "id": "link",
+            "label": "Link",
+            "type": "url"
+          },
+          {
+            "id": "style",
+            "label": "Style",
+            "type": "select",
+            "options": [
+              { "label": "Style 1", "value": "button-1" },
+              { "label": "Style 2", "value": "button-2" },
+              { "label": "Style 3", "value": "button-3" },
+              { "label": "Style 4", "value": "button-4" },
+              { "label": "Link", "value": "block-link" }
+            ],
+            "default": "button-1"
+          }
+        ]
+      },
+      {
+        "type": "icon",
+        "name": "Icon",
+        "settings": [
+          {
+            "id": "icon",
+            "type": "select",
+            "label": "Icon",
+            "options": [
+              {
+                "label": "None",
+                "value": "none"
+              },
+              {
+                "label": "Bell",
+                "value": "bell-ringing"
+              },
+              {
+                "label": "Calendar",
+                "value": "calendar"
+              },
+              {
+                "label": "Camera",
+                "value": "camera"
+              },
+              {
+                "label": "Checkmark",
+                "value": "check-fat"
+              },
+              {
+                "label": "Clipboard",
+                "value": "clipboard-text"
+              },
+              {
+                "label": "Clock",
+                "value": "clock"
+              },
+              {
+                "label": "Credit card",
+                "value": "credit-card"
+              },
+              {
+                "label": "Dollar sign",
+                "value": "currency-dollar"
+              },
+              {
+                "label": "Download",
+                "value": "download-simple"
+              },
+              {
+                "label": "Envelope",
+                "value": "envelope"
+              },
+              {
+                "label": "Earth",
+                "value": "globe-hemisphere-west"
+              },
+              {
+                "label": "Flower",
+                "value": "flower"
+              },
+              {
+                "label": "Gem",
+                "value": "sketch-logo"
+              },
+              {
+                "label": "Handshake",
+                "value": "handshake"
+              },
+              {
+                "label": "Headset",
+                "value": "headset"
+              },
+              {
+                "label": "Heart",
+                "value": "heart"
+              },
+              {
+                "label": "Key",
+                "value": "key"
+              },
+              {
+                "label": "Leaf",
+                "value": "leaf"
+              },
+              {
+                "label": "Lock",
+                "value": "lock-key"
+              },
+              {
+                "label": "Map",
+                "value": "map-pin"
+              },
+              {
+                "label": "Medal",
+                "value": "medal"
+              },
+              {
+                "label": "Message",
+                "value": "chat-circle-text"
+              },
+              {
+                "label": "Music",
+                "value": "music-notes"
+              },
+              {
+                "label": "Package",
+                "value": "package"
+              },
+              {
+                "label": "Paw",
+                "value": "paw-print"
+              },
+              {
+                "label": "People",
+                "value": "users-four"
+              },
+              {
+                "label": "Pencil",
+                "value": "pencil"
+              },
+              {
+                "label": "Phone",
+                "value": "device-mobile"
+              },
+              {
+                "label": "Plant",
+                "value": "plant"
+              },
+              {
+                "label": "Rabbit",
+                "value": "rabbit"
+              },
+              {
+                "label": "Recycle",
+                "value": "recycle"
+              },
+              {
+                "label": "Science",
+                "value": "atom"
+              },
+              {
+                "label": "Shield",
+                "value": "shield-check"
+              },
+              {
+                "label": "Smile",
+                "value": "smiley"
+              },
+              {
+                "label": "Star",
+                "value": "star"
+              },
+              {
+                "label": "Storefront",
+                "value": "storefront"
+              },
+              {
+                "label": "Sun",
+                "value": "sun"
+              },
+              {
+                "label": "Tree",
+                "value": "tree"
+              },
+              {
+                "label": "Truck",
+                "value": "truck"
+              }
+            ],
+            "default": "atom"
+          },
+          {
+            "id": "icon-image",
+            "label": "Icon image",
+            "type": "image_picker"
+          },
+          {
+            "id": "icon-width",
+            "label": "Icon width",
+            "type": "range",
+            "min": 20,
+            "max": 50,
+            "step": 1,
+            "default": 20
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Text",
+            "default": "Feature text"
+          }
+        ]
+      },
+      {
+        "type": "custom-liquid",
+        "name": "Custom liquid",
+        "settings": [
+          {
+            "type": "liquid",
+            "id": "custom-liquid",
+            "label": "Custom Liquid",
+            "info": "Add app snippets or other Liquid code to create advanced customizations."
+          }
+        ]
+      },
+      {
+        "type": "empty-space",
+        "name": "Empty space",
+        "settings": [
+          {
+            "id": "desktop-height",
+            "label": "Desktop height",
+            "type": "range",
+            "min": 0,
+            "max": 100,
+            "step": 4,
+            "unit": "px",
+            "default": 16
+          },
+          {
+            "id": "mobile-height",
+            "label": "Mobile height",
+            "type": "range",
+            "min": 0,
+            "max": 100,
+            "step": 4,
+            "unit": "px",
+            "default": 16
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Brand statement",
+        "category": "Storytelling",
+        "blocks": [
+          { "type": "overline" },
+          { "type": "heading" },
+          { "type": "description" },
+          { "type": "button" }
+        ]
+      }
+    ],
+    "disabled_on": {
+      "groups": ["aside"]
+    }
+  }
+{% endschema %}

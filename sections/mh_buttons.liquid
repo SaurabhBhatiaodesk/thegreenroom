@@ -1,0 +1,280 @@
+<style>
+  .text_color_{{ section.id }} * {color: {{ section.settings.text_color }} !important;}
+  .title_color_{{ section.id }} * {color: {{ section.settings.title_color }} !important;}
+
+  #shopify-section-{{ section.id }} .section_wrapper_d8 {
+    text-align: center;
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .text_d8 {
+    max-width: 700px;
+    margin: 0 auto 40px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  #shopify-section-{{ section.id }} .buttons_wrapper_d4 {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 80px;
+  }
+
+  #shopify-section-{{ section.id }} .button_d8 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    height: 70px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+  }
+
+  #shopify-section-{{ section.id }} .button_d8:hover {
+    transform: scale(1.05);
+  }
+
+  #shopify-section-{{ section.id }} .button_d8 h4 {
+    font-size: 13px;
+    text-align: center;
+    margin: 0;
+    padding: 0 12px;
+    line-height: 1.3;
+  }
+
+  #shopify-section-{{ section.id }} .signature_wrapper_d8 {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    padding-right: 40px;
+  }
+
+  #shopify-section-{{ section.id }} .title_d8 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    transform: rotate(-2deg);
+  }
+
+  #shopify-section-{{ section.id }} .signature_d8 {
+    max-width: 260px;
+    transform: rotate(-6deg);
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .text_d8 {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .signature_wrapper_d8 {
+      align-items: center;
+      text-align: center;
+      margin-top: 40px;
+      padding-right: 0;
+    }
+
+    #shopify-section-{{ section.id }} .title_d8 {
+      font-size: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .signature_d8 {
+      transform: rotate(-4deg);
+    }
+  }
+</style>
+
+<section class="mh_buttons_d8"
+  style="padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  background-color: {{ section.settings.background_color }};">
+  <div class="page-width">
+    <div class="section_wrapper_d8 max_width_dd">
+
+      {% if section.settings.text != blank %}
+        <div class="text_dd text_d8 text_color_{{ section.id }}">
+          {{ section.settings.text }}
+        </div>
+      {% endif %}
+
+      <div class="button_wrapper_d8 buttons_wrapper_d4">
+        {% for d in (1..3) %}
+          {% capture button_text %}button_text_{{ d }}{% endcapture %}
+          {% capture button_url %}button_url_{{ d }}{% endcapture %}
+          {% capture button_image %}button_image_{{ d }}{% endcapture %}
+          {% capture button_text_color %}button_text_color_{{ d }}{% endcapture %}
+
+          {% if section.settings[button_text] != blank %}
+            <a class="button_dd button_d8"
+              href="{{ section.settings[button_url] }}"
+              style="color: {{ section.settings[button_text_color] }};
+              background-image: url('{{ section.settings[button_image] | image_url }}')"
+              target="_blank">
+              <h4>{{ section.settings[button_text] }}</h4>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="signature_wrapper_d8">
+        {% if section.settings.title != blank %}
+          <h2 class="title_dd title_d8 title_color_{{ section.id }}">
+            {{ section.settings.title }}
+          </h2>
+        {% endif %}
+
+        {% if section.settings.signature != blank %}
+          <img class="image_dd signature_d8"
+            src="{{ section.settings.signature | image_url }}"
+            alt="{{ section.settings.signature.alt | escape }}"
+            width="100%" height="100%" loading="lazy"/>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "TIC Buttons",
+    "presets": [{"name": "TIC Buttons"}],
+    "settings": [
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background Color",
+        "default": "#fffdf6"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#000000"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text"
+      },
+      {
+        "type": "header",
+        "content": "__ Button 01 __"
+      },
+      {
+        "type": "image_picker",
+        "id": "button_image_1",
+        "label": "Button Image"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color_1",
+        "label": "Button Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "button_text_1",
+        "label": "Button Text"
+      },
+      {
+        "type": "url",
+        "id": "button_url_1",
+        "label": "Button Link"
+      },
+      {
+        "type": "header",
+        "content": "__ Button 02 __"
+      },
+      {
+        "type": "image_picker",
+        "id": "button_image_2",
+        "label": "Button Image"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color_2",
+        "label": "Button Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "button_text_2",
+        "label": "Button Text"
+      },
+      {
+        "type": "url",
+        "id": "button_url_2",
+        "label": "Button Link"
+      },
+      {
+        "type": "header",
+        "content": "__ Button 03 __"
+      },
+      {
+        "type": "image_picker",
+        "id": "button_image_3",
+        "label": "Button Image"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color_3",
+        "label": "Button Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "button_text_3",
+        "label": "Button Text"
+      },
+      {
+        "type": "url",
+        "id": "button_url_3",
+        "label": "Button Link"
+      },
+      {
+        "type": "color",
+        "id": "title_color",
+        "label": "Title Color",
+        "default": "#e27396"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "image_picker",
+        "id": "signature",
+        "label": "Signature Image"
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 100,
+        "step": 2,
+        "unit": "px",
+        "label": "Padding Top",
+        "default": 40
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 100,
+        "step": 2,
+        "unit": "px",
+        "label": "Padding Bottom",
+        "default": 40
+      }
+    ]
+  }
+{% endschema %}

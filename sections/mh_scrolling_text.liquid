@@ -1,0 +1,175 @@
+<style>
+  #shopify-section-{{ section.id }} .mh_scrolling_text_d6 {
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .marquee_d6 {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .marquee_track_d6 {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: mh-marquee-{{ section.id }} 10s linear infinite;
+  }
+
+  #shopify-section-{{ section.id }} .marquee_group_d6 {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    width: max-content;
+    margin: 0;
+    padding: 0 28px 0 0;
+    list-style: none;
+    gap: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .marquee_group_d6 li {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    color: {{ section.settings.text_color }};
+  }
+
+  #shopify-section-{{ section.id }} .marquee_group_d6 h4 {
+    margin: 0;
+    color: inherit;
+    white-space: nowrap;
+  }
+
+  @keyframes mh-marquee-{{ section.id }} {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-1 * var(--marquee-group-width, 0px)));
+    }
+  }
+</style>
+
+{% capture scrolling_text %}
+  {% for block in section.blocks %}
+    {% if block.settings.text != blank %}
+      <li {{ block.shopify_attributes }}><h4>{{ block.settings.text }}</h4></li>
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+<section class="mh_scrolling_text_d6">
+  <div class="marquee_d6">
+    <div class="marquee_track_d6">
+      <ul class="marquee_group_d6 marquee_original_d6">
+        {{ scrolling_text }}
+      </ul>
+      <ul class="marquee_group_d6 marquee_clone_d6" aria-hidden="true">
+        {{ scrolling_text }}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    var section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section) return;
+
+    var marquee = section.querySelector('.marquee_d6');
+    var track = section.querySelector('.marquee_track_d6');
+    var original = section.querySelector('.marquee_original_d6');
+
+    if (!marquee || !track || !original) return;
+
+    function setupMarquee() {
+      var clones = track.querySelectorAll('.marquee_clone_d6');
+      clones.forEach(function(clone, index) {
+        if (index > 0) clone.remove();
+      });
+
+      var originalWidth = original.offsetWidth;
+      var containerWidth = marquee.offsetWidth;
+
+      if (!originalWidth) return;
+
+      section.style.setProperty('--marquee-group-width', originalWidth + 'px');
+
+      var totalWidth = track.scrollWidth;
+
+      while (totalWidth < containerWidth + originalWidth) {
+        var clone = original.cloneNode(true);
+        clone.classList.remove('marquee_original_d6');
+        clone.classList.add('marquee_clone_d6');
+        clone.setAttribute('aria-hidden', 'true');
+        track.appendChild(clone);
+        totalWidth = track.scrollWidth;
+      }
+    }
+
+    setupMarquee();
+    window.addEventListener('resize', setupMarquee);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "TIC Scrolling Text",
+  "presets": [
+    {
+      "name": "TIC Scrolling Text"
+    }
+  ],
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20
+}
+{% endschema %}

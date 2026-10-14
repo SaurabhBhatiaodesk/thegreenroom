@@ -1,0 +1,607 @@
+{%- liquid
+  assign section_id = 'wedding-two-image-gallery-' | append: section.id
+  assign bg_color = section.settings.background_color
+  assign accent_color = section.settings.accent_color
+  assign current_page_url = shop.url | append: request.path
+-%}
+
+<style>
+  #{{ section_id }} {
+    --gallery-bg: {{ bg_color }};
+    --gallery-accent: {{ accent_color }};
+    --gallery-max-width: {{ section.settings.max_width }}px;
+    --gallery-padding-top: {{ section.settings.padding_top }}px;
+    --gallery-padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: var(--gallery-bg);
+    padding-top: var(--gallery-padding-top);
+    padding-bottom: var(--gallery-padding-bottom);
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__inner {
+    width: min(100% - 40px, var(--gallery-max-width));
+    margin: 0 auto;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__layout {
+    position: relative;
+    width: min(100%, {{ section.settings.collage_width }}px);
+    min-height: {{ section.settings.desktop_height }}px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__item {
+    position: absolute;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: wedding-two-image-gallery-fade-up-{{ section.id }} 700ms ease forwards;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__item--large {
+    top: 0;
+    left: 0;
+    width: {{ section.settings.large_image_width }}%;
+    animation-delay: 120ms;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__item--small {
+    top: {{ section.settings.small_image_top }}%;
+    left: {{ section.settings.small_image_left }}%;
+    width: {{ section.settings.small_image_width }}%;
+    z-index: 2;
+    animation-delay: 260ms;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__image-frame {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__item--large .wedding-two-image-gallery__image-frame {
+    aspect-ratio: {{ section.settings.large_image_aspect_ratio }};
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__item--small .wedding-two-image-gallery__image-frame {
+    aspect-ratio: {{ section.settings.small_image_aspect_ratio }};
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform: scale(1);
+    transition: transform 700ms ease, filter 700ms ease;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__image-frame:hover .wedding-two-image-gallery__image {
+    transform: scale({{ section.settings.hover_zoom | divided_by: 100.0 | plus: 1 }});
+    filter: saturate(1.04);
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: var(--gallery-accent);
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__pin {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--gallery-accent);
+    border-radius: 50%;
+    color: var(--gallery-accent);
+    background: var(--gallery-bg);
+    text-decoration: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease, background-color 160ms ease, color 160ms ease;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__image-frame:hover .wedding-two-image-gallery__pin,
+  #{{ section_id }} .wedding-two-image-gallery__pin:focus-visible {
+    opacity: {{ section.settings.pin_icon_opacity | divided_by: 100.0 }};
+    pointer-events: auto;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__pin:hover,
+  #{{ section_id }} .wedding-two-image-gallery__pin:focus-visible {
+    opacity: 1;
+    background: var(--gallery-accent);
+    color: var(--gallery-bg);
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__pin svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+    fill: currentColor;
+  }
+
+  #{{ section_id }} .wedding-two-image-gallery__pin-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @keyframes wedding-two-image-gallery-fade-up-{{ section.id }} {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .wedding-two-image-gallery__item {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    #{{ section_id }} .wedding-two-image-gallery__image {
+      transition: none;
+    }
+
+    #{{ section_id }} .wedding-two-image-gallery__image-frame:hover .wedding-two-image-gallery__image {
+      transform: none;
+      filter: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} {
+      --gallery-padding-top: {{ section.settings.mobile_padding_top }}px;
+      --gallery-padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+    }
+
+    #{{ section_id }} .wedding-two-image-gallery__inner {
+      width: min(100% - 32px, var(--gallery-max-width));
+    }
+
+    #{{ section_id }} .wedding-two-image-gallery__layout {
+      width: min(100%, {{ section.settings.mobile_collage_width }}px);
+      min-height: {{ section.settings.mobile_height }}px;
+    }
+
+    #{{ section_id }} .wedding-two-image-gallery__item--large {
+      width: {{ section.settings.mobile_large_image_width }}%;
+    }
+
+    #{{ section_id }} .wedding-two-image-gallery__item--small {
+      top: {{ section.settings.mobile_small_image_top }}%;
+      left: {{ section.settings.mobile_small_image_left }}%;
+      width: {{ section.settings.mobile_small_image_width }}%;
+    }
+
+    #{{ section_id }} .wedding-two-image-gallery__pin {
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      opacity: {{ section.settings.pin_icon_opacity | divided_by: 100.0 }};
+      pointer-events: auto;
+    }
+  }
+</style>
+
+{%- capture pinterest_icon -%}
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M12.1 2C6.6 2 3 5.8 3 10.1c0 2.7 1.5 4.2 2.4 4.2.4 0 .6-1.1.6-1.4 0-.4-.9-1.1-.9-2.6 0-3.2 2.5-5.5 6.6-5.5 3.2 0 5.6 1.8 5.6 5.2 0 2.5-1 7.2-4.3 7.2-1.2 0-2.2-.9-1.9-2.1.4-1.4 1.1-2.9 1.1-4 0-.9-.5-1.7-1.5-1.7-1.2 0-2.1 1.2-2.1 2.8 0 1 .3 1.7.3 1.7s-1.2 5-1.4 5.9c-.4 1.7-.1 3.8 0 4 .1.1.2.1.3 0 .1-.2 1.8-2.2 2.4-3.8.2-.5.9-3.4.9-3.4.5.9 1.8 1.6 3.2 1.6 4.2 0 7-3.8 7-8.9C21.3 5.4 18 2 12.1 2Z"/>
+  </svg>
+{%- endcapture -%}
+
+<section
+  id="{{ section_id }}"
+  class="wedding-two-image-gallery"
+  data-section-id="{{ section.id }}"
+  data-section-type="wedding-two-image-gallery"
+>
+  <div class="wedding-two-image-gallery__inner">
+    <div class="wedding-two-image-gallery__layout">
+      <div class="wedding-two-image-gallery__item wedding-two-image-gallery__item--large">
+        <div class="wedding-two-image-gallery__image-frame">
+          {%- if section.settings.large_image != blank -%}
+            {%- liquid
+              assign large_pin_description = section.settings.large_pin_description | default: section.settings.pin_description
+              assign large_pin_media = section.settings.large_image | image_url: width: 1400 | prepend: 'https:'
+              assign large_page_url = current_page_url | url_encode
+              assign large_media_url = large_pin_media | url_encode
+              assign large_description_url = large_pin_description | url_encode
+              assign large_pin_url = 'https://www.pinterest.com/pin/create/button/?url=' | append: large_page_url | append: '&media=' | append: large_media_url | append: '&description=' | append: large_description_url
+            -%}
+            {{
+              section.settings.large_image
+              | image_url: width: 1400
+              | image_tag:
+                class: 'wedding-two-image-gallery__image',
+                loading: 'lazy',
+                sizes: '(min-width: 750px) 50vw, 90vw',
+                widths: '375, 550, 750, 950, 1100, 1400'
+            }}
+            {%- if section.settings.enable_pinterest -%}
+              <a class="wedding-two-image-gallery__pin" href="{{ large_pin_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ section.settings.pin_label | escape }}">
+                {{ pinterest_icon }}
+                <span class="wedding-two-image-gallery__pin-text">{{ section.settings.pin_label | escape }}</span>
+              </a>
+            {%- endif -%}
+          {%- else -%}
+            <div class="wedding-two-image-gallery__placeholder">Add the large image in the Theme Editor.</div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="wedding-two-image-gallery__item wedding-two-image-gallery__item--small">
+        <div class="wedding-two-image-gallery__image-frame">
+          {%- if section.settings.small_image != blank -%}
+            {%- liquid
+              assign small_pin_description = section.settings.small_pin_description | default: section.settings.pin_description
+              assign small_pin_media = section.settings.small_image | image_url: width: 1000 | prepend: 'https:'
+              assign small_page_url = current_page_url | url_encode
+              assign small_media_url = small_pin_media | url_encode
+              assign small_description_url = small_pin_description | url_encode
+              assign small_pin_url = 'https://www.pinterest.com/pin/create/button/?url=' | append: small_page_url | append: '&media=' | append: small_media_url | append: '&description=' | append: small_description_url
+            -%}
+            {{
+              section.settings.small_image
+              | image_url: width: 1000
+              | image_tag:
+                class: 'wedding-two-image-gallery__image',
+                loading: 'lazy',
+                sizes: '(min-width: 750px) 20vw, 45vw',
+                widths: '240, 360, 500, 750, 1000'
+            }}
+            {%- if section.settings.enable_pinterest -%}
+              <a class="wedding-two-image-gallery__pin" href="{{ small_pin_url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ section.settings.pin_label | escape }}">
+                {{ pinterest_icon }}
+                <span class="wedding-two-image-gallery__pin-text">{{ section.settings.pin_label | escape }}</span>
+              </a>
+            {%- endif -%}
+          {%- else -%}
+            <div class="wedding-two-image-gallery__placeholder">Add the small image in the Theme Editor.</div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Wedding two image gallery",
+  "class": "section--wedding-two-image-gallery",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "large_image",
+      "label": "Large image"
+    },
+    {
+      "type": "image_picker",
+      "id": "small_image",
+      "label": "Small image"
+    },
+    {
+      "type": "select",
+      "id": "large_image_aspect_ratio",
+      "label": "Large image shape",
+      "options": [
+        {
+          "value": "4 / 5",
+          "label": "Portrait"
+        },
+        {
+          "value": "3 / 4",
+          "label": "Tall portrait"
+        },
+        {
+          "value": "1 / 1",
+          "label": "Square"
+        }
+      ],
+      "default": "4 / 5"
+    },
+    {
+      "type": "select",
+      "id": "small_image_aspect_ratio",
+      "label": "Small image shape",
+      "options": [
+        {
+          "value": "4 / 5",
+          "label": "Portrait"
+        },
+        {
+          "value": "3 / 4",
+          "label": "Tall portrait"
+        },
+        {
+          "value": "1 / 1",
+          "label": "Square"
+        }
+      ],
+      "default": "4 / 5"
+    },
+    {
+      "type": "header",
+      "content": "Pinterest"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_pinterest",
+      "label": "Show Pinterest icons",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "pin_label",
+      "label": "Pinterest accessible label",
+      "default": "Pin this image"
+    },
+    {
+      "type": "text",
+      "id": "pin_description",
+      "label": "Default pin description",
+      "default": "Wedding flowers by The Green Room Flower Company"
+    },
+    {
+      "type": "text",
+      "id": "large_pin_description",
+      "label": "Large image pin description"
+    },
+    {
+      "type": "text",
+      "id": "small_pin_description",
+      "label": "Small image pin description"
+    },
+    {
+      "type": "range",
+      "id": "pin_icon_opacity",
+      "label": "Pinterest icon opacity",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "hover_zoom",
+      "label": "Image hover zoom",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "%",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Colours"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Pinterest icon",
+      "default": "#b87961"
+    },
+    {
+      "type": "header",
+      "content": "Desktop layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "collage_width",
+      "label": "Collage width",
+      "min": 400,
+      "max": 1100,
+      "step": 25,
+      "unit": "px",
+      "default": 900
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "Collage height",
+      "min": 420,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 760
+    },
+    {
+      "type": "range",
+      "id": "large_image_width",
+      "label": "Large image width",
+      "min": 45,
+      "max": 75,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "small_image_width",
+      "label": "Small image width",
+      "min": 22,
+      "max": 45,
+      "step": 1,
+      "unit": "%",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "small_image_top",
+      "label": "Small image top position",
+      "min": 35,
+      "max": 75,
+      "step": 1,
+      "unit": "%",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "small_image_left",
+      "label": "Small image left position",
+      "min": 45,
+      "max": 80,
+      "step": 1,
+      "unit": "%",
+      "default": 62
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 176,
+      "step": 8,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 360,
+      "step": 8,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "range",
+      "id": "mobile_collage_width",
+      "label": "Collage width",
+      "min": 280,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "Collage height",
+      "min": 360,
+      "max": 720,
+      "step": 20,
+      "unit": "px",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "mobile_large_image_width",
+      "label": "Large image width",
+      "min": 55,
+      "max": 85,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "mobile_small_image_width",
+      "label": "Small image width",
+      "min": 32,
+      "max": 55,
+      "step": 1,
+      "unit": "%",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "mobile_small_image_top",
+      "label": "Small image top position",
+      "min": 35,
+      "max": 75,
+      "step": 1,
+      "unit": "%",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "mobile_small_image_left",
+      "label": "Small image left position",
+      "min": 40,
+      "max": 75,
+      "step": 1,
+      "unit": "%",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 240,
+      "step": 8,
+      "unit": "px",
+      "default": 96
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wedding two image gallery"
+    }
+  ]
+}
+{% endschema %}

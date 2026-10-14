@@ -1,0 +1,461 @@
+<!-- snippets/y-menu.liquid -->
+
+{%- doc -%}
+  Renders the mobile vertical navigation (y-menu).
+  @param {object[]} [blocks] - Associated menu blocks.
+  @param {string} [highlight_color] - Highlight color token.
+  @param {string} [highlight_item] - Menu item handle to highlight.
+  @param {string} [id] - Menu ID.
+  @param {boolean} [inside_drawer] - Whether the menu is inside a drawer.
+  @param {string} [menu] - Navigation menu handle. Defaults to `main-menu`.
+  @param {string} [modal_item] - Menu item handle that opens a modal.
+{%- enddoc -%}
+
+{%- liquid
+  assign back_t = 'layout.header.back' | t
+
+  unless menu
+    assign menu = 'main-menu'
+  endunless
+
+  assign list_lvl_1 = menu
+
+  if id
+    assign disable_onload_transition = true
+    assign id = 'y-menu_' | append: id
+  else
+    assign disable_onload_transition = false
+    assign id = 'y-menu'
+  endif
+-%}
+
+<y-menu-element
+  class="y-menu"
+  data-id="{{ id }}"
+  data-inside-drawer="{{ inside_drawer }}"
+  style="--highlight-color:{{ highlight_color }};"
+>
+  <ul
+    class="y-menu--level-1--container"
+    id="{{ id }}"
+    aria-current="true"
+    {% unless settings.transitions--other %}
+      data-transition-container="{{ id }}"
+      data-transition-cascade="vertical"
+      data-transition-cascade-interval="100"
+      data-transition-type="slide-right"
+    {% endunless %}
+  >
+    {% comment %} Level 1 {% endcomment %}
+    {%- for link_1 in linklists[list_lvl_1].links -%}
+      {%- liquid
+        assign current_menu_item = link_1.handle
+        assign menu_id = id | append: '_' | append: current_menu_item
+
+        capture menu_blocks
+          render 'menu-blocks', blocks: blocks, menu_item: current_menu_item, location: id
+        endcapture
+
+        assign has_sub_menu = false
+        if link_1.links != blank or menu_blocks != blank
+          assign has_sub_menu = true
+        endif
+      -%}
+
+      <li
+        class="y-menu--level-1--link"
+        data-depth="{{ link_1.levels | plus: 1 }}"
+        {% if highlight_item == current_menu_item %}
+          data-highlight="true"
+        {% endif %}
+      >
+        {%- if modal_item == current_menu_item and has_sub_menu == false -%}
+          <modal-trigger
+            data-id="header-modal"
+            data-delay="450"
+            data-item="nav-text"
+            tabindex="0"
+            aria-haspopup="true"
+            {% unless settings.transitions--other %}
+              data-transition-item="{{ id }}"
+              data-transition-active="{{ disable_onload_transition }}"
+            {% endunless %}
+          >
+            {%- liquid
+              echo link_1.title
+              if has_sub_menu
+                render 'icons', icon: 'chevron-right--small'
+              endif
+            -%}
+          </modal-trigger>
+        {%- else -%}
+          {%- if has_sub_menu -%}
+            <button
+              data-item="nav-text"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="{{ menu_id }}"
+              {% unless settings.transitions--other %}
+                data-transition-item="{{ id }}"
+                data-transition-active="{{ disable_onload_transition }}"
+              {% endunless %}
+            >
+              {%- liquid
+                echo link_1.title
+                render 'icons', icon: 'chevron-right--small'
+              -%}
+            </button>
+
+          {%- else -%}
+            <a
+              href="{{ link_1.url }}"
+              data-item="nav-text"
+              {% unless settings.transitions--other %}
+                data-transition-item="{{ id }}"
+                data-transition-active="{{ disable_onload_transition }}"
+              {% endunless %}
+            >
+              {{- link_1.title -}}
+            </a>
+          {%- endif -%}
+
+        {%- endif -%}
+
+        {%- comment -%} Level 2 {%- endcomment -%}
+        {%- if has_sub_menu -%}
+          {%- liquid
+            assign parent_link = true
+            if link_1.url == '#' or link_1.url == '/#'
+              assign parent_link = false
+            endif
+          -%}
+
+          <ul
+            class="y-menu--level-2--container"
+            {% if parent_link %}
+              data-depth="2"
+            {% endif %}
+            id="{{ menu_id }}"
+            aria-current="false"
+            {% unless settings.transitions--other %}
+              data-transition-container="{{ menu_id }}"
+              data-transition-cascade="vertical"
+              data-transition-cascade-interval="100"
+              data-transition-type="slide-right"
+            {% endunless %}
+          >
+            <li class="y-menu--back-link">
+              <button
+                data-item="nav-text"
+                aria-controls="{{ id }}"
+                {% unless settings.transitions--other %}
+                  data-transition-item="{{ menu_id }}"
+                {% endunless %}
+              >
+                {%- render 'icons', icon: 'chevron-left--small' %} {{ back_t -}}
+              </button>
+            </li>
+
+            {%- if parent_link -%}
+              <li class="y-menu--parent-link">
+                {%- if modal_item == current_menu_item -%}
+                  <modal-trigger
+                    data-id="header-modal"
+                    data-item="nav-text"
+                    data-delay="450"
+                    tabindex="0"
+                    aria-haspopup="true"
+                    {% unless settings.transitions--other %}
+                      data-transition-item="{{ menu_id }}"
+                    {% endunless %}
+                  >
+                    {{- link_1.title -}}
+                  </modal-trigger>
+                {%- else -%}
+                  <a
+                    href="{{ link_1.url }}"
+                    data-item="nav-text"
+                    {% unless settings.transitions--other %}
+                      data-transition-item="{{ menu_id }}"
+                    {% endunless %}
+                  >
+                    {{- link_1.title -}}
+                  </a>
+                {%- endif -%}
+              </li>
+            {%- endif -%}
+
+            {%- assign list_lvl_2 = link_1.handle -%}
+            {%- for link_2 in linklists[list_lvl_2].links -%}
+              {%- assign sub_menu_id = menu_id | append: '_' | append: link_2.handle -%}
+              <li class="y-menu--level-2--link" data-item="nav-text">
+                {%- unless link_2.links == blank -%}
+                  <button
+                    data-item="nav-text"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-controls="{{ sub_menu_id }}"
+                    {% unless settings.transitions--other %}
+                      data-transition-item="{{ menu_id }}"
+                    {% endunless %}
+                  >
+                    {%- liquid
+                      echo link_2.title
+                      render 'icons', icon: 'chevron-right--small'
+                    -%}
+                  </button>
+
+                {%- else -%}
+                  <a
+                    href="{{ link_2.url }}"
+                    data-item="nav-text"
+                    {% unless settings.transitions--other %}
+                      data-transition-item="{{ menu_id }}"
+                    {% endunless %}
+                  >
+                    {{- link_2.title -}}
+                  </a>
+                {%- endunless -%}
+
+                {% comment %} Level 3 {% endcomment %}
+                {%- unless link_2.links == blank -%}
+                  {%- liquid
+                    assign parent_link = true
+                    if link_2.url == '#' or link_2.url == '/#'
+                      assign parent_link = false
+                    endif
+                  -%}
+
+                  <ul
+                    class="y-menu--level-3--container"
+                    {% if parent_link %}
+                      data-depth="3"
+                    {% endif %}
+                    id="{{ sub_menu_id }}"
+                    aria-current="false"
+                    {% unless settings.transitions--other %}
+                      data-transition-container="{{ sub_menu_id }}"
+                      data-transition-cascade="vertical"
+                      data-transition-cascade-interval="100"
+                      data-transition-type="slide-right"
+                    {% endunless %}
+                  >
+                    <li class="y-menu--back-link">
+                      <button
+                        data-item="nav-text"
+                        aria-controls="{{ menu_id }}"
+                        {% unless settings.transitions--other %}
+                          data-transition-item="{{ sub_menu_id }}"
+                        {% endunless %}
+                      >
+                        {%- render 'icons', icon: 'chevron-left--small' %} {{ back_t -}}
+                      </button>
+                    </li>
+
+                    {%- if parent_link -%}
+                      <li class="y-menu--parent-link">
+                        {%- if modal_item == current_menu_item -%}
+                          <modal-trigger
+                            data-id="header-modal"
+                            data-item="nav-text"
+                            data-delay="450"
+                            tabindex="0"
+                            aria-haspopup="true"
+                            {% unless settings.transitions--other %}
+                              data-transition-item="{{ sub_menu_id }}"
+                            {% endunless %}
+                          >
+                            {{- link_1.title -}}
+                          </modal-trigger>
+                        {%- else -%}
+                          <a
+                            href="{{ link_2.url }}"
+                            data-item="nav-text"
+                            {% unless settings.transitions--other %}
+                              data-transition-item="{{ sub_menu_id }}"
+                            {% endunless %}
+                          >
+                            {{- link_2.title -}}
+                          </a>
+                        {%- endif -%}
+                      </li>
+                    {%- endif -%}
+
+                    {%- assign list_lvl_3 = link_2.handle -%}
+                    {%- for link_3 in linklists[list_lvl_3].links -%}
+                      <li class="y-menu--level-3--link" data-item="nav-text">
+                        <a
+                          href="{{ link_3.url }}"
+                          data-item="nav-text"
+                          {% unless settings.transitions--other %}
+                            data-transition-item="{{ sub_menu_id }}"
+                          {% endunless %}
+                        >
+                          {{- link_3.title -}}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+
+                {%- endunless -%}
+
+                {%- comment -%} End Level 3 {%- endcomment -%}
+              </li>
+            {%- endfor -%}
+
+            {%- unless menu_blocks == blank -%}
+              <li class="y-menu--blocks">
+                {{- menu_blocks -}}
+              </li>
+            {%- endunless -%}
+          </ul>
+        {%- endif -%}
+
+        {%- comment -%} End Level 2 {%- endcomment -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+
+  {%- comment -%} End level 1 {%- endcomment -%}
+</y-menu-element>
+
+{% stylesheet %}
+  .y-menu {
+    --transition--menu-duration: 0.4s; /* in seconds */
+    --current-level: 0;
+    --height: auto;
+
+    display: block;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    height: var(--height);
+    transition: height var(--transition--menu-duration) var(--transition--ease-out);
+    will-change: height;
+
+    .menu-block--description {
+      padding-top: var(--spacing--1);
+      text-align: center;
+    }
+
+    :is(.menu-block--image-wrapper, .blog-grid--root, .menu-block--products > *) {
+      padding: var(--spacing--item);
+    }
+
+    .menu-block--products {
+      @media (min-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .menu-block--featured {
+      --image--radius: 0;
+      container-type: inline-size; /* create container query for image-block */
+    }
+
+    & button[data-item='nav-text'] {
+      position: relative;
+      display: flex;
+      gap: var(--spacing--item);
+      align-items: center;
+      justify-content: space-between;
+      line-height: 1.3;
+      padding: 24px var(--spacing--item);
+      color: var(--color--body); /* iOS */
+      width: 100%;
+    }
+  }
+
+  .y-menu--level-1--container {
+    transform: translateX(calc(var(--current-level) * -100%));
+    transition: transform var(--transition--menu-duration) var(--transition--ease-out);
+    will-change: transform;
+  }
+
+  .y-menu--parent-link,
+  .y-menu--level-1--link,
+  .y-menu--level-2--link,
+  .y-menu--level-3--link {
+    > :is(a, button, modal-trigger) {
+      border-bottom: var(--border--dark);
+    }
+
+    &:first-child > :is(a, button, modal-trigger) {
+      border-top: var(--border--dark);
+    }
+
+    & svg {
+      pointer-events: none;
+    }
+
+    > :is(a, modal-trigger) {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing--item);
+      line-height: 1.3;
+      padding: 24px var(--spacing--item);
+    }
+  }
+
+  .y-menu--back-link {
+    border-top: var(--border--dark);
+    border-bottom: var(--border--dark);
+
+    > button[data-item='nav-text'] {
+      justify-content: start;
+    }
+  }
+
+  .y-menu--level-1--link[data-highlight='true'] {
+    > :is(button, a, modal-trigger) {
+      color: var(--highlight-color);
+    }
+  }
+
+  .y-menu--level-2--container {
+    position: absolute;
+    background: var(--bg-color--body);
+    left: 100%;
+    width: 100%;
+    top: 0;
+    bottom: 0; /* for full height */
+    height: fit-content;
+
+    &[aria-current='false']:not(:has(.y-menu--level-3--container[aria-current='true'])) {
+      display: none;
+    }
+  }
+
+  .y-menu--level-2--link {
+    [data-depth='2'] & > a {
+      padding-left: var(--spacing--block);
+    }
+  }
+
+  .y-menu--level-3--container {
+    position: absolute;
+    left: 100%;
+    width: 100%;
+    top: 0;
+    bottom: 0; /* for full height */
+    background: var(--bg-color--body);
+    height: fit-content;
+
+    &[aria-current='false'] {
+      display: none;
+    }
+  }
+
+  .y-menu--level-3--link {
+    [data-depth='3'] & > a {
+      padding-left: var(--spacing--block);
+    }
+  }
+
+  .y-menu--blocks {
+    display: block;
+    border-bottom: var(--border--dark);
+  }
+{% endstylesheet %}

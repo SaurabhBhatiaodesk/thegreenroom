@@ -1,0 +1,230 @@
+<style>
+  #shopify-section-{{ section.id }} .section_wrapper_h7 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px;
+    align-items: start;
+  }
+
+  #shopify-section-{{ section.id }} .header_h7 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    max-width: 100%;
+    padding-left: 40px;
+    padding-top: 80px;
+  }
+
+  #shopify-section-{{ section.id }} .title_row_h7 {
+    position: relative;
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .title_wrapper_h7 {
+    position: relative;
+    z-index: 2;
+  }
+
+  #shopify-section-{{ section.id }} .title_wrapper_h7 h2:not(:first-child) {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .title_wrapper_h7 h2.title_dd {
+    margin: 0;
+    text-align: left;
+    line-height: 1.1;
+    font-size: 48px;
+  }
+
+  #shopify-section-{{ section.id }} .title_image_h7 {
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 180px;
+    max-width: 180px;
+    height: auto;
+    opacity: 0.2;
+    z-index: 1;
+    animation: tic-rotate-h7-{{ section.id }} 12s linear infinite;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .image_bottom_text_h7 {
+    margin: 20px 0 0;
+    text-align: left;
+    width: 100%;
+    font-size: 20px;
+    line-height: 1.5;
+  }
+
+  #shopify-section-{{ section.id }} .image_h7 {
+    width: 75%;
+    max-width: 420px;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: 40px;
+  }
+
+  @keyframes tic-rotate-h7-{{ section.id }} {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .section_wrapper_h7 {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    #shopify-section-{{ section.id }} .header_h7 {
+      padding-left: 20px;
+      padding-top: 0;
+    }
+
+    #shopify-section-{{ section.id }} .title_wrapper_h7 h2.title_dd {
+      font-size: 34px;
+    }
+
+    #shopify-section-{{ section.id }} .image_bottom_text_h7 {
+      font-size: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .image_h7 {
+      width: calc(100% - 24px);
+      max-width: calc(100% - 24px);
+      margin: 12px auto;
+    }
+
+    #shopify-section-{{ section.id }} .title_image_h7 {
+      right: -10px;
+      top: -15px;
+      width: 110px;
+      max-width: 110px;
+      opacity: 0.15;
+    }
+  }
+</style>
+
+<section
+  class="mh_titles_with_image_h7"
+  style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px; background-color: {{ section.settings.background_color }};"
+  data-aos="fade-up"
+>
+  <div class="page-width">
+    <div class="section_wrapper_h7 max_width_dd">
+      
+      <div class="header_h7">
+        {% if section.settings.title != blank or section.settings.title_image != blank %}
+          <div class="title_row_h7">
+
+            {% if section.settings.title != blank %}
+              <div class="title_wrapper_h7">
+                <h2 class="title_dd" style="color: {{ section.settings.title_color }}">{{ section.settings.title }}</h2>
+                <h2 class="title_dd" style="color: {{ section.settings.title_color }}">{{ section.settings.title }}</h2>
+                <h2 class="title_dd" style="color: {{ section.settings.title_color }}">{{ section.settings.title }}</h2>
+                <h2 class="title_dd" style="color: {{ section.settings.title_color }}">{{ section.settings.title }}</h2>
+              </div>
+            {% endif %}
+
+            {% if section.settings.title_image != blank %}
+              <img
+                class="image_dd round_rotate_dd title_image_h7"
+                src="{{ section.settings.title_image | image_url }}"
+                alt="{{ section.settings.title_image.alt | escape }}"
+                loading="lazy"
+              >
+            {% endif %}
+
+          </div>
+        {% endif %}
+
+        {% if section.settings.text != blank %}
+          <h4 class="title_dd image_bottom_text_h7" style="color: {{ section.settings.title_color }}">
+            {{ section.settings.text }}
+          </h4>
+        {% endif %}
+      </div>
+
+      {% if section.settings.image != blank %}
+        <img
+          class="image_dd image_h7"
+          src="{{ section.settings.image | image_url }}"
+          alt="{{ section.settings.image.alt | escape }}"
+          loading="lazy"
+        >
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "TIC Titles With Image",
+  "presets": [
+    {
+      "name": "TIC Titles With Image"
+    }
+  ],
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#d65709"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#fcb9b9"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "image_picker",
+      "id": "title_image",
+      "label": "Title Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 40
+    }
+  ]
+}
+{% endschema %}

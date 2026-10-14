@@ -1,0 +1,21 @@
+<!-- sections/cart.liquid -->
+
+{%- liquid
+  render 'cart', view: 'desktop'
+  render 'cart', view: 'mobile'
+-%}
+
+{% schema %}
+{
+  "name": "Cart",
+  "class": "section--cart",
+  "settings": [
+    {
+      "type": "collection_list",
+      "id": "target_collections",
+      "label": "Show wedding fields for collections",
+      "limit": 10
+    }
+  ]
+}
+{% endschema %}
