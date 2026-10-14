@@ -273,7 +273,7 @@
       {%- if video_upload -%}
         {%- liquid
           assign video = video_upload | video_tag: autoplay: autoplay, muted: autoplay, loop: autoplay
-          assign video = video | replace: '<img', '<img loading="lazy"'
+          assign video = video | replace: '<img', '<img alt="Video thumbnail" loading="lazy"'
           echo video
         -%}
       {%- else -%}
