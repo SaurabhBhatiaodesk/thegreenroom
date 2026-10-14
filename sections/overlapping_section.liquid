@@ -385,7 +385,7 @@
               class="image_dd background_image_h3 {% if block.settings.background_image_position == 'left' %}bottom_left_{{ section.id }}_h3{% elsif block.settings.background_image_position == 'bottom' %}bottom_{{ section.id }}_h3{% elsif block.settings.background_image_position == 'right' %}bottom_right_{{ section.id }}_h3{% endif %}"
               src="{{ block.settings.background_image | image_url: width: 2400 }}"
               alt="{{ block.settings.background_image.alt | escape }}"
-              loading="eager"
+              width="" height="" loading="lazy"
             >
           {% endif %}
 
