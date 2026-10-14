@@ -114,6 +114,7 @@
               {%-
                 render 'image',
                 image: thumbnail,
+                alt: heading,
                 background: true,
                 overlay_style: overlay_style,
                 display_type: display_type,
@@ -273,8 +274,8 @@
       {%- if video_upload -%}
         {%- liquid
           assign video = video_upload | video_tag: autoplay: autoplay, muted: autoplay, loop: autoplay
-          assign video = video | replace: '<img', '<img alt="Video thumbnail" loading="lazy"'
-          echo video
+          assign thumbnail_alt = video_upload.preview_image.alt | default: heading
+          render 'video-thumbnail-alt', video: video, alt: thumbnail_alt
         -%}
       {%- else -%}
         <div id="{{ id }}-player"></div>

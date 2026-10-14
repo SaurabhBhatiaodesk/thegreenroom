@@ -159,8 +159,7 @@
       {%- if video_upload -%}
         {%- liquid
           assign video = video_upload | video_tag: autoplay: autoplay, muted: autoplay, loop: autoplay
-          assign video = video | replace: '<img', '<img loading="lazy"'
-          echo video
+          render 'video-thumbnail-alt', video: video, alt: video_upload.preview_image.alt
         -%}
       {%- else -%}
         <div id="{{ section.id }}-player"></div>

@@ -84,7 +84,7 @@
                     <img 
                       class="pp-gallery-image__primary"
                       src="{{ block.settings.image | image_url: width: 900 }}" 
-                      alt="{{ block.settings.label | escape }}" 
+                      alt="{{ block.settings.image.alt | default: block.settings.label | escape }}"
                       loading="lazy" 
                       width="900" 
                       height="1116"
@@ -97,7 +97,7 @@
                     <img
                       class="pp-gallery-image__hover"
                       src="{{ block.settings.hover_image | image_url: width: 900 }}"
-                      alt="{{ block.settings.label | escape }}"
+                      alt="{{ block.settings.hover_image.alt | default: block.settings.label | escape }}"
                       loading="lazy"
                       width="900"
                       height="1116"

@@ -46,6 +46,7 @@
       assign description = block.settings.description
       assign icon = block.settings.icon
       assign image = block.settings.image
+      assign image_alt = image.alt | default: author_name
       assign link = block.settings.link
 
       assign tag = 'div'
@@ -76,6 +77,7 @@
           image |
           image_url: width: image.width |
           image_tag:
+            alt: image_alt,
             widths: '200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200',
             sizes: '160px',
             loading: loading

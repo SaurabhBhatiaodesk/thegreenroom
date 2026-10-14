@@ -35,6 +35,7 @@
     {%- for collection in collection_list -%}
       {%- liquid
         assign no_product_images = true
+        assign collection_image_alt = collection.image.alt | default: collection.title
         assign placeholder_index = forloop.index
         if forloop.index > 6
           assign placeholder_index = forloop.index | minus: 6
@@ -47,6 +48,7 @@
             collection.image |
             image_url: width: collection.image.width |
             image_tag:
+              alt: collection_image_alt,
               widths: '200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1500',
               sizes: sizes,
               loading: loading
@@ -56,10 +58,12 @@
           {%- for product in collection.products -%}
             {%- if product.featured_media.preview_image -%}
               {%- assign no_product_images = false -%}
+              {%- assign product_image_alt = product.featured_media.alt | default: product.title -%}
               {{-
                 product.featured_media.preview_image |
                 image_url: width: product.featured_media.preview_image.width |
                 image_tag:
+                  alt: product_image_alt,
                   widths: '200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1500',
                   sizes: sizes,
                   loading: loading

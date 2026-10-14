@@ -1054,6 +1054,7 @@
 
 
 
+                assign cart_image_alt = preview_image.alt | default: item.product.title
               -%}
 
 
@@ -1106,7 +1107,7 @@
 
 
 
-                    | image_tag: widths: "300, 500", sizes: '250px', loading: 'lazy'
+                    | image_tag: widths: "300, 500", sizes: '250px', loading: 'lazy', alt: cart_image_alt
 
 
 
